@@ -681,10 +681,11 @@ export function createSEOCriteria(analyses: ArticleAnalysis[], userTargetWordCou
 
   return {
     targetWordCount: maxWordCount,
-    // 文字数ベースでH2数を計算（2000文字あたり1セクション）
+    // 文字数ベースでH2数を計算（3000文字あたり1セクション）
     // Akaharaスタイルは1セクションが長くなる傾向があるため、セクション数を抑える
-    targetH2Count: Math.max(Math.ceil(maxWordCount / 2000), 5),
-    targetH3Count: Math.max(maxH3Count + 5, 20), // 最低20個
+    targetH2Count: Math.max(Math.ceil(maxWordCount / 3000), 5),
+    // H3も文字数ベースで制限（1000文字あたり1セクション）
+    targetH3Count: Math.max(Math.ceil(maxWordCount / 1000), 15),
     targetKeywords,
     targetSynonyms,
     targetRelated
@@ -781,10 +782,11 @@ ${offer ? `5. オファー（${offer}）への誘導を最終的なゴールと�
 estimates.keywordCounts の合計値は、必ず【キーワード目標】で指定された回数以上になるように計画してください。
 
 【重要: 構成のサイズとセクション数】
-1. **セクション数（H2）は、目標数（${seoCriteria.targetH2Count}個）前後（±3個）に収めてください。** むやみに増やしすぎないこと。
-2. **出力トークン制限（8000トークン）を超えないため、各セクションの「内容メモ」は簡潔な箇条書き（1-2行）に留めてください。**
+1. **セクション数（H2）は、目標数（${seoCriteria.targetH2Count}個）に可能な限り近づけてください（±2個以内）。**
+2. **H3見出しの総数も、目標数（${seoCriteria.targetH3Count}個）に可能な限り近づけてください（±2個以内）。** これより多くしすぎないこと。
+3. **出力トークン制限（8000トークン）を超えないため、各セクションの「内容メモ」は簡潔な箇条書き（1-2行）に留めてください。**
    長文のメモは禁止です。見出しとキーワードで内容が伝わるように工夫してください。
-3. H2/H3の階層構造は省略せずに全て書き出してください。
+4. H2/H3の階層構造は省略せずに全て書き出してください。
 
 【${authorName}スタイルの鉄則】
 1. 一人称は「僕」のみ

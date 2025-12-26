@@ -328,6 +328,7 @@ export default function SEOArticle() {
     try {
       setTheme(historyItem.theme);
       setTargetWordCount(historyItem.targetWordCount || 5000);
+      setTargetPersona(historyItem.targetPersona || "");
       setRemarks(historyItem.remarks || "");
       setOffer(historyItem.offer || "");
       // keywordsがJSON文字列の場合はパースして配列に変換

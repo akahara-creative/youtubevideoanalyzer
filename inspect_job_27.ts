@@ -6,15 +6,15 @@ import { eq } from 'drizzle-orm';
 
 async function inspectJob27() {
   const db = await getDb();
-  const jobs = await db.select().from(seoArticleJobs).where(eq(seoArticleJobs.id, 27)).limit(1);
+  const jobs = await db.select().from(seoArticleJobs).where(eq(seoArticleJobs.id, 28)).limit(1);
   const job = jobs[0];
 
   if (!job) {
-    console.error('Job 27 not found');
+    console.error('Job 28 not found');
     return;
   }
 
-  console.log('=== Job 27 Details ===');
+  console.log('=== Job 28 Details ===');
   console.log(`Status: ${job.status}`);
   console.log(`Article Length: ${job.article?.length}`);
   
