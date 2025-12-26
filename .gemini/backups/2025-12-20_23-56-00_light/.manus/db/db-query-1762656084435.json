@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, contentType, title, SUBSTRING(content, 1, 100) as content_preview, createdAt\nFROM generatedContents\nORDER BY createdAt DESC\nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, contentType, title, SUBSTRING(content, 1, 100) as content_preview, createdAt\nFROM generatedContents\nORDER BY createdAt DESC\nLIMIT 5;",
+  "rows": [],
+  "messages": [
+    "30001\tlongContent\tNULL\t## AIの未来：進化する知性とコンテンツ革命",
+    "AI（人工知能）の未来は、単なる技術革新に留まらず、私たちの生活、仕事、そしてコンテンツとの関わり方を根本から変革します。",
+    "特に注目すべきは、**生\t2025-11-09 02:40:58",
+    "1\tlongContent\tNULL\t承知いたしました。YouTube動画「Me at the zoo」の歴史的な重要性を説明するメールを、プロフェッショナルな形式で作成します。",
+    "---",
+    "## 件名：YouTube史上初の動画「Me \t2025-11-09 02:28:46"
+  ],
+  "stdout": "id\tcontentType\ttitle\tcontent_preview\tcreatedAt\n30001\tlongContent\tNULL\t## AIの未来：進化する知性とコンテンツ革命\n\nAI（人工知能）の未来は、単なる技術革新に留まらず、私たちの生活、仕事、そしてコンテンツとの関わり方を根本から変革します。\n\n特に注目すべきは、**生\t2025-11-09 02:40:58\n1\tlongContent\tNULL\t承知いたしました。YouTube動画「Me at the zoo」の歴史的な重要性を説明するメールを、プロフェッショナルな形式で作成します。\n\n---\n\n## 件名：YouTube史上初の動画「Me \t2025-11-09 02:28:46\n",
+  "stderr": "",
+  "execution_time_ms": 1599
+}

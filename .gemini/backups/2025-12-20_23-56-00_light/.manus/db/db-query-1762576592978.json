@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS contentImports (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  fileName VARCHAR(255) NOT NULL,\n  fileType ENUM('txt', 'docx', 'pdf') NOT NULL,\n  fileUrl VARCHAR(1000) NOT NULL,\n  fileKey VARCHAR(500) NOT NULL,\n  fileSize INT,\n  extractedText TEXT,\n  category VARCHAR(100),\n  tags TEXT,\n  notes TEXT,\n  ragId VARCHAR(100),\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE IF NOT EXISTS contentImports (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  fileName VARCHAR(255) NOT NULL,\n  fileType ENUM('txt', 'docx', 'pdf') NOT NULL,\n  fileUrl VARCHAR(1000) NOT NULL,\n  fileKey VARCHAR(500) NOT NULL,\n  fileSize INT,\n  extractedText TEXT,\n  category VARCHAR(100),\n  tags TEXT,\n  notes TEXT,\n  ragId VARCHAR(100),\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1701
+}

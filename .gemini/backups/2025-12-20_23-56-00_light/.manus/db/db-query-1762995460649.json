@@ -1,0 +1,20 @@
+{
+  "query": "SELECT id, youtubeUrl, status, title, createdAt, updatedAt, TIMESTAMPDIFF(HOUR, createdAt, NOW()) as elapsed_hours, TIMESTAMPDIFF(MINUTE, createdAt, NOW()) as elapsed_minutes FROM videoAnalyses WHERE status = 'processing' ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, youtubeUrl, status, title, createdAt, updatedAt, TIMESTAMPDIFF(HOUR, createdAt, NOW()) as elapsed_hours, TIMESTAMPDIFF(MINUTE, createdAt, NOW()) as elapsed_minutes FROM videoAnalyses WHERE status = 'processing' ORDER BY createdAt DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "360001",
+      "youtubeUrl": "https://youtu.be/FFir2KuD3hc",
+      "status": "processing",
+      "title": "NULL",
+      "createdAt": "2025-11-12 09:26:54",
+      "updatedAt": "2025-11-12 09:26:54",
+      "elapsed_hours": "15",
+      "elapsed_minutes": "930"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tyoutubeUrl\tstatus\ttitle\tcreatedAt\tupdatedAt\telapsed_hours\telapsed_minutes\n360001\thttps://youtu.be/FFir2KuD3hc\tprocessing\tNULL\t2025-11-12 09:26:54\t2025-11-12 09:26:54\t15\t930\n",
+  "stderr": "",
+  "execution_time_ms": 1484
+}

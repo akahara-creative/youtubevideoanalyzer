@@ -1,0 +1,12 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE theme = '読書習慣' ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE theme = '読書習慣' ORDER BY createdAt DESC LIMIT 1",
+  "rows": [],
+  "messages": [
+    "60005\t読書習慣\tprocessing\t2\t15\tFailed query: update `videoGenerationJobs` set `progress` = ?, `benchmarkAnalysisId` = ?, `updatedAt` = ? where `videoGenerationJobs`.`id` = ?",
+    "params: 25,NaN,2025-11-17 23:54:50.124,60005\t2025-11-17 23:38:46\t2025-11-17 23:54:52"
+  ],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tcreatedAt\tupdatedAt\n60005\t読書習慣\tprocessing\t2\t15\tFailed query: update `videoGenerationJobs` set `progress` = ?, `benchmarkAnalysisId` = ?, `updatedAt` = ? where `videoGenerationJobs`.`id` = ?\nparams: 25,NaN,2025-11-17 23:54:50.124,60005\t2025-11-17 23:38:46\t2025-11-17 23:54:52\n",
+  "stderr": "",
+  "execution_time_ms": 1624
+}

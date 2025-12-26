@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, youtubeUrl, status, errorMessage, errorDetails, createdAt FROM videoAnalyses ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, youtubeUrl, status, errorMessage, errorDetails, createdAt FROM videoAnalyses ORDER BY createdAt DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "330001",
+      "youtubeUrl": "https://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY",
+      "status": "failed",
+      "errorMessage": "ffmpeg was killed with signal SIGKILL",
+      "errorDetails": "NULL",
+      "createdAt": "2025-11-12 05:00:32"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tyoutubeUrl\tstatus\terrorMessage\terrorDetails\tcreatedAt\n330001\thttps://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY\tfailed\tffmpeg was killed with signal SIGKILL\tNULL\t2025-11-12 05:00:32\n",
+  "stderr": "",
+  "execution_time_ms": 2060
+}

@@ -1,0 +1,18 @@
+{
+  "query": "SELECT * FROM chatConversations WHERE id = 60002",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT * FROM chatConversations WHERE id = 60002",
+  "rows": [
+    {
+      "id": "60002",
+      "userId": "1",
+      "title": "テスト会話（あなた禁止）",
+      "createdAt": "2025-11-09 03:13:41",
+      "updatedAt": "2025-11-09 03:13:41",
+      "keywordProjectId": "30001"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttitle\tcreatedAt\tupdatedAt\tkeywordProjectId\n60002\t1\tテスト会話（あなた禁止）\t2025-11-09 03:13:41\t2025-11-09 03:13:41\t30001\n",
+  "stderr": "",
+  "execution_time_ms": 1575
+}

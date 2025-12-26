@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, userId, theme, status, currentStep, progress, benchmarkAnalysisId, strategyId, scenarioId, slideDesignId, errorMessage, createdAt, updatedAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, userId, theme, status, currentStep, progress, benchmarkAnalysisId, strategyId, scenarioId, slideDesignId, errorMessage, createdAt, updatedAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 3;",
+  "rows": [
+    {
+      "id": "60030",
+      "userId": "1",
+      "theme": "スキーマ修正後の完全テスト",
+      "status": "processing",
+      "currentStep": "4",
+      "progress": "35",
+      "benchmarkAnalysisId": "60107",
+      "strategyId": "30083",
+      "scenarioId": "28",
+      "slideDesignId": "NULL",
+      "errorMessage": "OpenAI TTS API error: 404 - 404 page not found",
+      "createdAt": "2025-11-18 11:41:51",
+      "updatedAt": "2025-11-18 11:44:27"
+    },
+    {
+      "id": "60029",
+      "userId": "1",
+      "theme": "完全動作確認",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80",
+      "benchmarkAnalysisId": "60105",
+      "strategyId": "30082",
+      "scenarioId": "27",
+      "slideDesignId": "NULL",
+      "errorMessage": "OpenAI TTS API error: 404 - 404 page not found",
+      "createdAt": "2025-11-18 10:57:04",
+      "updatedAt": "2025-11-18 11:03:38"
+    },
+    {
+      "id": "60028",
+      "userId": "1",
+      "theme": "最終修正テスト",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80",
+      "benchmarkAnalysisId": "60101",
+      "strategyId": "30078",
+      "scenarioId": "24",
+      "slideDesignId": "NULL",
+      "errorMessage": "OpenAI API credentials not configured",
+      "createdAt": "2025-11-18 10:41:51",
+      "updatedAt": "2025-11-18 10:48:26"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttheme\tstatus\tcurrentStep\tprogress\tbenchmarkAnalysisId\tstrategyId\tscenarioId\tslideDesignId\terrorMessage\tcreatedAt\tupdatedAt\n60030\t1\tスキーマ修正後の完全テスト\tprocessing\t4\t35\t60107\t30083\t28\tNULL\tOpenAI TTS API error: 404 - 404 page not found\t2025-11-18 11:41:51\t2025-11-18 11:44:27\n60029\t1\t完全動作確認\tfailed\t8\t80\t60105\t30082\t27\tNULL\tOpenAI TTS API error: 404 - 404 page not found\t2025-11-18 10:57:04\t2025-11-18 11:03:38\n60028\t1\t最終修正テスト\tfailed\t8\t80\t60101\t30078\t24\tNULL\tOpenAI API credentials not configured\t2025-11-18 10:41:51\t2025-11-18 10:48:26\n",
+  "stderr": "",
+  "execution_time_ms": 1540
+}

@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE videoScenario\nCHANGE COLUMN hookSeconds hookDuration INT,\nCHANGE COLUMN problemSeconds problemDuration INT,\nCHANGE COLUMN solutionSeconds solutionDuration INT,\nCHANGE COLUMN ctaSeconds ctaDuration INT,\nCHANGE COLUMN totalSeconds totalDuration INT",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute ALTER TABLE videoScenario\nCHANGE COLUMN hookSeconds hookDuration INT,\nCHANGE COLUMN problemSeconds problemDuration INT,\nCHANGE COLUMN solutionSeconds solutionDuration INT,\nCHANGE COLUMN ctaSeconds ctaDuration INT,\nCHANGE COLUMN totalSeconds totalDuration INT",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1060 (42S21) at line 1: Duplicate column name 'ctaDuration'"
+  ]
+}

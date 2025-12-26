@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs WHERE status IN ('pending', 'processing') ORDER BY createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs WHERE status IN ('pending', 'processing') ORDER BY createdAt DESC;",
+  "rows": [
+    {
+      "id": "60030",
+      "theme": "スキーマ修正後の完全テスト",
+      "status": "processing",
+      "currentStep": "2",
+      "progress": "15",
+      "createdAt": "2025-11-18 11:41:51"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\tcreatedAt\n60030\tスキーマ修正後の完全テスト\tprocessing\t2\t15\t2025-11-18 11:41:51\n",
+  "stderr": "",
+  "execution_time_ms": 1522
+}

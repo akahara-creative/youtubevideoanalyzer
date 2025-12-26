@@ -1,0 +1,16 @@
+{
+  "query": "SELECT `ragDocumentTags`.`tagId`, `tags`.`value`, `tags`.`displayName`, `tagCategories`.`name`, `tagCategories`.`displayName` FROM `ragDocumentTags` LEFT JOIN `tags` ON `ragDocumentTags`.`tagId` = `tags`.`id` LEFT JOIN `tagCategories` ON `tags`.`categoryId` = `tagCategories`.`id` WHERE `ragDocumentTags`.`documentId` = 4 LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT `ragDocumentTags`.`tagId`, `tags`.`value`, `tags`.`displayName`, `tagCategories`.`name`, `tagCategories`.`displayName` FROM `ragDocumentTags` LEFT JOIN `tags` ON `ragDocumentTags`.`tagId` = `tags`.`id` LEFT JOIN `tagCategories` ON `tags`.`categoryId` = `tagCategories`.`id` WHERE `ragDocumentTags`.`documentId` = 4 LIMIT 1",
+  "rows": [
+    {
+      "tagId": "5",
+      "value": "共通",
+      "displayName": "生成ジャンル",
+      "name": "genre"
+    }
+  ],
+  "messages": [],
+  "stdout": "tagId\tvalue\tdisplayName\tname\tdisplayName\n5\t共通\t共通\tgenre\t生成ジャンル\n",
+  "stderr": "",
+  "execution_time_ms": 1617
+}

@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, jobId, userId, LEFT(faqSection, 500) as faqPreview FROM seoArticleEnhancements WHERE faqSection IS NOT NULL ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, jobId, userId, LEFT(faqSection, 500) as faqPreview FROM seoArticleEnhancements WHERE faqSection IS NOT NULL ORDER BY createdAt DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "120001",
+      "jobId": "900001",
+      "userId": "1",
+      "faqPreview": "## よくある質問（FAQ）"
+    }
+  ],
+  "messages": [
+    "### Q1: ステップメールとは何ですか？なぜSEOやSNS集客で成果が出ない人にとって重要なのでしょうか？",
+    "A: ステップメールとは、見込み客がメールアドレスを登録した時点を起点とし、事前に設定されたシナリオ（複数のメール）を段階的かつ自動で配信する仕組みです。記事で述べられているように、「**SEOで成果が出ない**」や「**バズを収益化できない**」といった問題は、集客後の「**顧客育成**」と「**信頼構築**」ができていないことが原因です。ステップメールは、この顧客育成プロセスを自動化し、見込み客の**購買意欲**を高め、「**安定収益**」に繋げるための**収益化の仕組み**の生命線となります。",
+    "### Q2: ステップメールを導入することで、具体的にどのような失敗（SEO、バズ、プレゼント企画）を解決できますか？",
+    "A: ステップメールは、集客施策の限界を補完します。",
+    "1.  **SEOで成果が出ない**：記事を読んで離脱する読者をメールリストに誘導し、自動で**顧客育成**することで、**コンバージョン率**（CVR）を向上させます。"
+  ],
+  "stdout": "id\tjobId\tuserId\tfaqPreview\n120001\t900001\t1\t## よくある質問（FAQ）\n\n### Q1: ステップメールとは何ですか？なぜSEOやSNS集客で成果が出ない人にとって重要なのでしょうか？\nA: ステップメールとは、見込み客がメールアドレスを登録した時点を起点とし、事前に設定されたシナリオ（複数のメール）を段階的かつ自動で配信する仕組みです。記事で述べられているように、「**SEOで成果が出ない**」や「**バズを収益化できない**」といった問題は、集客後の「**顧客育成**」と「**信頼構築**」ができていないことが原因です。ステップメールは、この顧客育成プロセスを自動化し、見込み客の**購買意欲**を高め、「**安定収益**」に繋げるための**収益化の仕組み**の生命線となります。\n\n### Q2: ステップメールを導入することで、具体的にどのような失敗（SEO、バズ、プレゼント企画）を解決できますか？\nA: ステップメールは、集客施策の限界を補完します。\n1.  **SEOで成果が出ない**：記事を読んで離脱する読者をメールリストに誘導し、自動で**顧客育成**することで、**コンバージョン率**（CVR）を向上させます。\n\n",
+  "stderr": "",
+  "execution_time_ms": 1577
+}

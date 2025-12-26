@@ -1,0 +1,37 @@
+{
+  "query": "SHOW CREATE TABLE seoArticleJobs",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW CREATE TABLE seoArticleJobs",
+  "rows": [
+    {
+      "Table": "seoArticleJobs",
+      "Create Table": "CREATE TABLE `seoArticleJobs` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `userId` int(11) NOT NULL,",
+    "  `theme` varchar(500) NOT NULL,",
+    "  `targetWordCount` int(11) NOT NULL,",
+    "  `authorName` varchar(100) NOT NULL,",
+    "  `status` enum('pending','processing','completed','failed','cancelled') NOT NULL DEFAULT 'pending',",
+    "  `currentStep` int(11) DEFAULT '1',",
+    "  `progress` int(11) DEFAULT '0',",
+    "  `keywords` longtext DEFAULT NULL,",
+    "  `analyses` longtext DEFAULT NULL,",
+    "  `criteria` longtext DEFAULT NULL,",
+    "  `structure` longtext DEFAULT NULL,",
+    "  `article` longtext DEFAULT NULL,",
+    "  `qualityCheck` longtext DEFAULT NULL,",
+    "  `errorMessage` text DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  `autoEnhance` int(11) NOT NULL DEFAULT '0' COMMENT '0: manual, 1: auto-enhance after generation',",
+    "  `batchId` varchar(64) DEFAULT NULL COMMENT 'Batch ID for CSV batch processing',",
+    "  `completedAt` timestamp NULL DEFAULT NULL COMMENT 'Completion timestamp',",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=1020001"
+  ],
+  "stdout": "Table\tCreate Table\nseoArticleJobs\tCREATE TABLE `seoArticleJobs` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `userId` int(11) NOT NULL,\n  `theme` varchar(500) NOT NULL,\n  `targetWordCount` int(11) NOT NULL,\n  `authorName` varchar(100) NOT NULL,\n  `status` enum('pending','processing','completed','failed','cancelled') NOT NULL DEFAULT 'pending',\n  `currentStep` int(11) DEFAULT '1',\n  `progress` int(11) DEFAULT '0',\n  `keywords` longtext DEFAULT NULL,\n  `analyses` longtext DEFAULT NULL,\n  `criteria` longtext DEFAULT NULL,\n  `structure` longtext DEFAULT NULL,\n  `article` longtext DEFAULT NULL,\n  `qualityCheck` longtext DEFAULT NULL,\n  `errorMessage` text DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `autoEnhance` int(11) NOT NULL DEFAULT '0' COMMENT '0: manual, 1: auto-enhance after generation',\n  `batchId` varchar(64) DEFAULT NULL COMMENT 'Batch ID for CSV batch processing',\n  `completedAt` timestamp NULL DEFAULT NULL COMMENT 'Completion timestamp',\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=1020001\n",
+  "stderr": "",
+  "execution_time_ms": 1571
+}

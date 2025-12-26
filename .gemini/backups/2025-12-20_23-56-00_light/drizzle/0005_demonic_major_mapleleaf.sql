@@ -1,0 +1,1 @@
+ALTER TABLE `videoAnalyses` MODIFY COLUMN `status` enum('processing','completed','failed','cancelled') NOT NULL DEFAULT 'processing';

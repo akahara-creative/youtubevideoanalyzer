@@ -1,0 +1,61 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'videoScenario' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'videoScenario' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "jobId"
+    },
+    {
+      "COLUMN_NAME": "userId"
+    },
+    {
+      "COLUMN_NAME": "hookContent"
+    },
+    {
+      "COLUMN_NAME": "hookDuration"
+    },
+    {
+      "COLUMN_NAME": "hookPurpose"
+    },
+    {
+      "COLUMN_NAME": "problemContent"
+    },
+    {
+      "COLUMN_NAME": "problemDuration"
+    },
+    {
+      "COLUMN_NAME": "problemPurpose"
+    },
+    {
+      "COLUMN_NAME": "solutionContent"
+    },
+    {
+      "COLUMN_NAME": "solutionDuration"
+    },
+    {
+      "COLUMN_NAME": "solutionPurpose"
+    },
+    {
+      "COLUMN_NAME": "ctaContent"
+    },
+    {
+      "COLUMN_NAME": "ctaDuration"
+    },
+    {
+      "COLUMN_NAME": "ctaPurpose"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\njobId\nuserId\nhookContent\nhookDuration\nhookPurpose\nproblemContent\nproblemDuration\nproblemPurpose\nsolutionContent\nsolutionDuration\nsolutionPurpose\nctaContent\nctaDuration\nctaPurpose\ncreatedAt\nupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

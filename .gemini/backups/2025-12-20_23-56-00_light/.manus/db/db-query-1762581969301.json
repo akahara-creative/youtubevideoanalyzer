@@ -1,0 +1,30 @@
+{
+  "query": "SHOW CREATE TABLE contentImports;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW CREATE TABLE contentImports;",
+  "rows": [
+    {
+      "Table": "contentImports",
+      "Create Table": "CREATE TABLE `contentImports` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `userId` int(11) NOT NULL,",
+    "  `fileName` varchar(255) NOT NULL,",
+    "  `fileType` enum('txt','docx','pdf') NOT NULL,",
+    "  `fileUrl` varchar(1000) NOT NULL,",
+    "  `fileKey` varchar(500) NOT NULL,",
+    "  `fileSize` int(11) DEFAULT NULL,",
+    "  `extractedText` text DEFAULT NULL,",
+    "  `category` varchar(100) DEFAULT NULL,",
+    "  `tags` text DEFAULT NULL,",
+    "  `notes` text DEFAULT NULL,",
+    "  `ragId` varchar(100) DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin"
+  ],
+  "stdout": "Table\tCreate Table\ncontentImports\tCREATE TABLE `contentImports` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `userId` int(11) NOT NULL,\n  `fileName` varchar(255) NOT NULL,\n  `fileType` enum('txt','docx','pdf') NOT NULL,\n  `fileUrl` varchar(1000) NOT NULL,\n  `fileKey` varchar(500) NOT NULL,\n  `fileSize` int(11) DEFAULT NULL,\n  `extractedText` text DEFAULT NULL,\n  `category` varchar(100) DEFAULT NULL,\n  `tags` text DEFAULT NULL,\n  `notes` text DEFAULT NULL,\n  `ragId` varchar(100) DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin\n",
+  "stderr": "",
+  "execution_time_ms": 1687
+}

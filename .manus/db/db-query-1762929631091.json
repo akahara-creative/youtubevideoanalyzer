@@ -1,0 +1,32 @@
+{
+  "query": "SELECT id, youtubeUrl, status, errorMessage, createdAt FROM videoAnalyses ORDER BY createdAt DESC LIMIT 3",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, youtubeUrl, status, errorMessage, createdAt FROM videoAnalyses ORDER BY createdAt DESC LIMIT 3",
+  "rows": [
+    {
+      "id": "300001",
+      "youtubeUrl": "https://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY",
+      "status": "failed",
+      "errorMessage": "Transcription failed: Audio file exceeds maximum size limit - File size is 19.13MB, maximum allowed is 16MB",
+      "createdAt": "2025-11-12 02:25:03"
+    },
+    {
+      "id": "270001",
+      "youtubeUrl": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+      "status": "completed",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-08 04:42:48"
+    }
+  ],
+  "messages": [
+    "330001\thttps://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY\tfailed\tTranscription failed: Transcription service request failed - 504 Gateway Time-out: <html>",
+    "<head><title>504 Gateway Time-out</title></head>",
+    "<body>",
+    "<center><h1>504 Gateway Time-out</h1></center>",
+    "</body>",
+    "</html>",
+    "\t2025-11-12 05:00:32"
+  ],
+  "stdout": "id\tyoutubeUrl\tstatus\terrorMessage\tcreatedAt\n330001\thttps://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY\tfailed\tTranscription failed: Transcription service request failed - 504 Gateway Time-out: <html>\n<head><title>504 Gateway Time-out</title></head>\n<body>\n<center><h1>504 Gateway Time-out</h1></center>\n</body>\n</html>\n\t2025-11-12 05:00:32\n300001\thttps://youtu.be/bnZHnWLRaAQ?si=ZNhk_JuNUH4OKenY\tfailed\tTranscription failed: Audio file exceeds maximum size limit - File size is 19.13MB, maximum allowed is 16MB\t2025-11-12 02:25:03\n270001\thttps://www.youtube.com/watch?v=jNQXAC9IVRw\tcompleted\tNULL\t2025-11-08 04:42:48\n",
+  "stderr": "",
+  "execution_time_ms": 1589
+}

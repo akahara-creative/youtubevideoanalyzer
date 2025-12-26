@@ -1,0 +1,13 @@
+{
+  "query": "SHOW TABLES LIKE 'seoArticleJobs';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW TABLES LIKE 'seoArticleJobs';",
+  "rows": [
+    {
+      "Tables_in_NYSDZ3CUp62WRWmJyXH7Fz (seoArticleJobs)": "seoArticleJobs"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_NYSDZ3CUp62WRWmJyXH7Fz (seoArticleJobs)\nseoArticleJobs\n",
+  "stderr": "",
+  "execution_time_ms": 1647
+}

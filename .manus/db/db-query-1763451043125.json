@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, createdAt FROM videoGenerationJobs ORDER BY id DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, createdAt FROM videoGenerationJobs ORDER BY id DESC LIMIT 1;",
+  "rows": [
+    {
+      "id": "60018",
+      "theme": "リロードテスト",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80",
+      "errorMessage": "Navigation timeout of 30000 ms exceeded",
+      "createdAt": "2025-11-18 06:46:08"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tcreatedAt\n60018\tリロードテスト\tfailed\t8\t80\tNavigation timeout of 30000 ms exceeded\t2025-11-18 06:46:08\n",
+  "stderr": "",
+  "execution_time_ms": 1534
+}

@@ -1,0 +1,143 @@
+{
+  "query": "SELECT id, theme, status, createdAt, updatedAt FROM seoArticleJobs ORDER BY createdAt DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, createdAt, updatedAt FROM seoArticleJobs ORDER BY createdAt DESC LIMIT 20",
+  "rows": [
+    {
+      "id": "330001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 19:52:13",
+      "updatedAt": "2025-11-10 19:55:34"
+    },
+    {
+      "id": "300001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 19:32:35",
+      "updatedAt": "2025-11-10 19:35:28"
+    },
+    {
+      "id": "270001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 10:03:00",
+      "updatedAt": "2025-11-10 10:06:19"
+    },
+    {
+      "id": "240001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 08:40:37",
+      "updatedAt": "2025-11-10 08:44:00"
+    },
+    {
+      "id": "210001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 08:24:23",
+      "updatedAt": "2025-11-10 08:27:09"
+    },
+    {
+      "id": "180001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 04:16:04",
+      "updatedAt": "2025-11-10 04:18:55"
+    },
+    {
+      "id": "150001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 03:51:30",
+      "updatedAt": "2025-11-10 03:54:34"
+    },
+    {
+      "id": "120002",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 03:03:42",
+      "updatedAt": "2025-11-10 03:06:54"
+    },
+    {
+      "id": "120001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "pending",
+      "createdAt": "2025-11-10 03:00:05",
+      "updatedAt": "2025-11-10 03:00:05"
+    },
+    {
+      "id": "90001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 02:17:18",
+      "updatedAt": "2025-11-10 02:19:50"
+    },
+    {
+      "id": "60001",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "completed",
+      "createdAt": "2025-11-10 01:57:14",
+      "updatedAt": "2025-11-10 02:00:02"
+    },
+    {
+      "id": "30001",
+      "theme": "テスト",
+      "status": "processing",
+      "createdAt": "2025-11-10 00:56:01",
+      "updatedAt": "2025-11-10 00:57:04"
+    },
+    {
+      "id": "7",
+      "theme": "AIツール",
+      "status": "completed",
+      "createdAt": "2025-11-09 20:46:06",
+      "updatedAt": "2025-11-09 20:49:10"
+    },
+    {
+      "id": "6",
+      "theme": "AIツール",
+      "status": "failed",
+      "createdAt": "2025-11-09 20:42:24",
+      "updatedAt": "2025-11-09 20:42:42"
+    },
+    {
+      "id": "5",
+      "theme": "AIツール",
+      "status": "pending",
+      "createdAt": "2025-11-09 20:39:31",
+      "updatedAt": "2025-11-09 20:39:31"
+    },
+    {
+      "id": "4",
+      "theme": "AIツール",
+      "status": "pending",
+      "createdAt": "2025-11-09 20:34:40",
+      "updatedAt": "2025-11-09 20:34:40"
+    },
+    {
+      "id": "3",
+      "theme": "AIツール",
+      "status": "pending",
+      "createdAt": "2025-11-09 20:31:29",
+      "updatedAt": "2025-11-09 20:31:29"
+    },
+    {
+      "id": "2",
+      "theme": "AIツール",
+      "status": "pending",
+      "createdAt": "2025-11-09 20:27:13",
+      "updatedAt": "2025-11-09 20:27:13"
+    },
+    {
+      "id": "1",
+      "theme": "AIツールの選び方",
+      "status": "pending",
+      "createdAt": "2025-11-09 20:24:28",
+      "updatedAt": "2025-11-09 20:24:28"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcreatedAt\tupdatedAt\n330001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 19:52:13\t2025-11-10 19:55:34\n300001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 19:32:35\t2025-11-10 19:35:28\n270001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 10:03:00\t2025-11-10 10:06:19\n240001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 08:40:37\t2025-11-10 08:44:00\n210001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 08:24:23\t2025-11-10 08:27:09\n180001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 04:16:04\t2025-11-10 04:18:55\n150001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 03:51:30\t2025-11-10 03:54:34\n120002\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 03:03:42\t2025-11-10 03:06:54\n120001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tpending\t2025-11-10 03:00:05\t2025-11-10 03:00:05\n90001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 02:17:18\t2025-11-10 02:19:50\n60001\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tcompleted\t2025-11-10 01:57:14\t2025-11-10 02:00:02\n30001\tテスト\tprocessing\t2025-11-10 00:56:01\t2025-11-10 00:57:04\n7\tAIツール\tcompleted\t2025-11-09 20:46:06\t2025-11-09 20:49:10\n6\tAIツール\tfailed\t2025-11-09 20:42:24\t2025-11-09 20:42:42\n5\tAIツール\tpending\t2025-11-09 20:39:31\t2025-11-09 20:39:31\n4\tAIツール\tpending\t2025-11-09 20:34:40\t2025-11-09 20:34:40\n3\tAIツール\tpending\t2025-11-09 20:31:29\t2025-11-09 20:31:29\n2\tAIツール\tpending\t2025-11-09 20:27:13\t2025-11-09 20:27:13\n1\tAIツールの選び方\tpending\t2025-11-09 20:24:28\t2025-11-09 20:24:28\n",
+  "stderr": "",
+  "execution_time_ms": 1515
+}

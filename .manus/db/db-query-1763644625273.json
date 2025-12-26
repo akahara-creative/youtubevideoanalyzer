@@ -1,0 +1,18 @@
+{
+  "query": "SHOW COLUMNS FROM seoArticleJobs WHERE Field = 'status'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW COLUMNS FROM seoArticleJobs WHERE Field = 'status'",
+  "rows": [
+    {
+      "Field": "status",
+      "Type": "enum('pending','processing','completed','failed','cancelled')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "pending",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nstatus\tenum('pending','processing','completed','failed','cancelled')\tNO\t\tpending\t\n",
+  "stderr": "",
+  "execution_time_ms": 1600
+}

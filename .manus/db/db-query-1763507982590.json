@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE id = 90002",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE id = 90002",
+  "rows": [],
+  "messages": [
+    "90002\tSEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由\tfailed\t5\t50\tFailed to launch the browser process:  Code: 127",
+    "stderr:",
+    "/root/.cache/puppeteer/chrome/linux-142.0.7444.61/chrome-linux64/chrome: error while loading shared libraries: libglib-2.0.so.0: cannot open shared object file: No such file or directory",
+    "TROUBLESHOOTING: https://pptr.dev/troubleshooting",
+    "\t2025-11-18 23:00:52\t2025-11-18 23:19:33"
+  ],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tcreatedAt\tupdatedAt\n90002\tSEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由\tfailed\t5\t50\tFailed to launch the browser process:  Code: 127\n\nstderr:\n/root/.cache/puppeteer/chrome/linux-142.0.7444.61/chrome-linux64/chrome: error while loading shared libraries: libglib-2.0.so.0: cannot open shared object file: No such file or directory\n\nTROUBLESHOOTING: https://pptr.dev/troubleshooting\n\t2025-11-18 23:00:52\t2025-11-18 23:19:33\n",
+  "stderr": "",
+  "execution_time_ms": 1602
+}

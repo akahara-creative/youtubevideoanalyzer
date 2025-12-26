@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, conversationId, LEFT(content, 100) as content_preview, createdAt FROM chatMessages WHERE conversationId = 60002 AND role = 'user' ORDER BY createdAt DESC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, conversationId, LEFT(content, 100) as content_preview, createdAt FROM chatMessages WHERE conversationId = 60002 AND role = 'user' ORDER BY createdAt DESC",
+  "rows": [
+    {
+      "id": "90014",
+      "conversationId": "60002",
+      "content_preview": "t",
+      "createdAt": "2025-11-09 03:45:35"
+    },
+    {
+      "id": "90013",
+      "conversationId": "60002",
+      "content_preview": "テスト8：修正後のテスト",
+      "createdAt": "2025-11-09 03:36:42"
+    },
+    {
+      "id": "90012",
+      "conversationId": "60002",
+      "content_preview": "テスト7：Enterキーで送信",
+      "createdAt": "2025-11-09 03:35:19"
+    },
+    {
+      "id": "90011",
+      "conversationId": "60002",
+      "content_preview": "テスト6：価値を5文字で",
+      "createdAt": "2025-11-09 03:33:02"
+    },
+    {
+      "id": "90010",
+      "conversationId": "60002",
+      "content_preview": "テスト5：本質を10文字で",
+      "createdAt": "2025-11-09 03:30:33"
+    },
+    {
+      "id": "90009",
+      "conversationId": "60002",
+      "content_preview": "テスト4：価値提供を15文字で",
+      "createdAt": "2025-11-09 03:27:20"
+    },
+    {
+      "id": "90008",
+      "conversationId": "60002",
+      "content_preview": "テスト3：本質を20文字で",
+      "createdAt": "2025-11-09 03:25:38"
+    },
+    {
+      "id": "90007",
+      "conversationId": "60002",
+      "content_preview": "テスト2：ネットビジネスの価値提供について50文字で",
+      "createdAt": "2025-11-09 03:23:28"
+    },
+    {
+      "id": "90006",
+      "conversationId": "60002",
+      "content_preview": "テスト：ネットビジネスの本質について100文字程度で説明してください",
+      "createdAt": "2025-11-09 03:21:45"
+    },
+    {
+      "id": "90005",
+      "conversationId": "60002",
+      "content_preview": "ネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください",
+      "createdAt": "2025-11-09 03:15:31"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tconversationId\tcontent_preview\tcreatedAt\n90014\t60002\tt\t2025-11-09 03:45:35\n90013\t60002\tテスト8：修正後のテスト\t2025-11-09 03:36:42\n90012\t60002\tテスト7：Enterキーで送信\t2025-11-09 03:35:19\n90011\t60002\tテスト6：価値を5文字で\t2025-11-09 03:33:02\n90010\t60002\tテスト5：本質を10文字で\t2025-11-09 03:30:33\n90009\t60002\tテスト4：価値提供を15文字で\t2025-11-09 03:27:20\n90008\t60002\tテスト3：本質を20文字で\t2025-11-09 03:25:38\n90007\t60002\tテスト2：ネットビジネスの価値提供について50文字で\t2025-11-09 03:23:28\n90006\t60002\tテスト：ネットビジネスの本質について100文字程度で説明してください\t2025-11-09 03:21:45\n90005\t60002\tネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください\t2025-11-09 03:15:31\n",
+  "stderr": "",
+  "execution_time_ms": 1543
+}

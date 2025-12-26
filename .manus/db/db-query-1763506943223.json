@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs ORDER BY id DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs ORDER BY id DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "90002",
+      "theme": "SEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由",
+      "status": "processing",
+      "currentStep": "6",
+      "progress": "65",
+      "createdAt": "2025-11-18 23:00:52"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\tcreatedAt\n90002\tSEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由\tprocessing\t6\t65\t2025-11-18 23:00:52\n",
+  "stderr": "",
+  "execution_time_ms": 1686
+}

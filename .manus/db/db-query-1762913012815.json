@@ -1,0 +1,56 @@
+{
+  "query": "SELECT id, analysisId, startTime, endTime, \n  CASE WHEN transcription IS NOT NULL THEN CONCAT(LEFT(transcription, 50), '...') ELSE NULL END as transcription_preview,\n  CASE WHEN visualDescription IS NOT NULL THEN CONCAT(LEFT(visualDescription, 50), '...') ELSE NULL END as visual_preview\nFROM timelineSegments \nORDER BY id DESC \nLIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, analysisId, startTime, endTime, \n  CASE WHEN transcription IS NOT NULL THEN CONCAT(LEFT(transcription, 50), '...') ELSE NULL END as transcription_preview,\n  CASE WHEN visualDescription IS NOT NULL THEN CONCAT(LEFT(visualDescription, 50), '...') ELSE NULL END as visual_preview\nFROM timelineSegments \nORDER BY id DESC \nLIMIT 5",
+  "rows": [
+    {
+      "id": "150007",
+      "analysisId": "270002",
+      "startTime": "180",
+      "endTime": "210",
+      "transcription_preview": "Never gonna give you up, never gonna let you down,...",
+      "visual_preview": "これは、1987年のリック・アストリーのヒット曲「ネヴァー・ゴナ・ギヴ・ユー・アップ（Never G..."
+    },
+    {
+      "id": "150006",
+      "analysisId": "270002",
+      "startTime": "150",
+      "endTime": "180",
+      "transcription_preview": "Inside we both know what's been going on, we know ...",
+      "visual_preview": "この動画フレームは、特定のミュージックビデオからの抜粋であり、非常に有名でインターネットミームとして..."
+    },
+    {
+      "id": "150005",
+      "analysisId": "270002",
+      "startTime": "120",
+      "endTime": "150",
+      "transcription_preview": "Give you up, give you up, never gonna give, give y...",
+      "visual_preview": "これは、屋外で撮影されたと思われる人物のクローズアップの動画フレームです。"
+    },
+    {
+      "id": "150004",
+      "analysisId": "270002",
+      "startTime": "90",
+      "endTime": "120",
+      "transcription_preview": "Never gonna give you up, never gonna let you down,...",
+      "visual_preview": "この動画フレームを分析した結果を専門家として詳しく説明します。"
+    },
+    {
+      "id": "150003",
+      "analysisId": "270002",
+      "startTime": "60",
+      "endTime": "90",
+      "transcription_preview": "Never gonna make you cry, never gonna say goodbye,...",
+      "visual_preview": "この動画フレームを分析した結果、以下のような詳細が確認されました。"
+    }
+  ],
+  "messages": [
+    "このフレームにはコード...",
+    "---",
+    "### 動画フレームの分...",
+    "## 動画フレームの分析",
+    "こ..."
+  ],
+  "stdout": "id\tanalysisId\tstartTime\tendTime\ttranscription_preview\tvisual_preview\n150007\t270002\t180\t210\tNever gonna give you up, never gonna let you down,...\tこれは、1987年のリック・アストリーのヒット曲「ネヴァー・ゴナ・ギヴ・ユー・アップ（Never G...\n150006\t270002\t150\t180\tInside we both know what's been going on, we know ...\tこの動画フレームは、特定のミュージックビデオからの抜粋であり、非常に有名でインターネットミームとして...\n150005\t270002\t120\t150\tGive you up, give you up, never gonna give, give y...\tこれは、屋外で撮影されたと思われる人物のクローズアップの動画フレームです。\n\nこのフレームにはコード...\n150004\t270002\t90\t120\tNever gonna give you up, never gonna let you down,...\tこの動画フレームを分析した結果を専門家として詳しく説明します。\n\n---\n\n### 動画フレームの分...\n150003\t270002\t60\t90\tNever gonna make you cry, never gonna say goodbye,...\tこの動画フレームを分析した結果、以下のような詳細が確認されました。\n\n## 動画フレームの分析\n\nこ...\n",
+  "stderr": "",
+  "execution_time_ms": 1731
+}

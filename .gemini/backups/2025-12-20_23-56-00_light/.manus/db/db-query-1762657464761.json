@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE contentImports SET isPinned = 1 WHERE fileName IN ('AIAkaharaLogic_writing.txt', 'AIAkaharaLogic_plot.txt', '洞察資料.txt')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute UPDATE contentImports SET isPinned = 1 WHERE fileName IN ('AIAkaharaLogic_writing.txt', 'AIAkaharaLogic_plot.txt', '洞察資料.txt')",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1554
+}

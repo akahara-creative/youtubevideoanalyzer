@@ -1,0 +1,143 @@
+# ドキュメントマップ
+
+**目的**: SEO記事生成機能と動画生成機能の開発時に、効率的にドキュメントを参照するためのガイド
+
+---
+
+## 📚 主要ドキュメント一覧
+
+### 🎯 全体像を把握するドキュメント
+
+1. **`COMPLETE_TECHNICAL_SPECIFICATION.md`** ⭐ 最重要
+   - 全機能の完全技術仕様書
+   - システム全体像、アーキテクチャ、各機能の詳細
+   - **最初に読むべきドキュメント**
+
+2. **`README.md`**
+   - プロジェクト概要、クイックスタート、主要機能の説明
+   - 技術スタック、プロジェクト構造
+
+3. **`TODO.md`**
+   - 完了済み機能、未実装機能、修正が必要な問題
+   - 実装状況の把握に最適
+
+---
+
+## 📝 SEO記事生成機能関連
+
+### 実装設計書
+- **`SEO_BATCH_AND_AUTO_PROCESSING_DESIGN.md`** ⭐
+  - CSVバッチ処理と自動加工機能の実装設計書
+  - 難易度評価、実装スケジュール、技術的な注意点
+  - **SEO機能の拡張時に必読**
+
+- **`SEO_AUTO_PROCESSING_SIMPLIFIED.md`**
+  - 自動加工機能の簡略化実装設計書
+  - 既存の`enhanceArticle()`関数を活用した実装方法
+
+- **`SEO_BATCH_REMAINING_IMPLEMENTATION.md`**
+  - バッチ処理機能の残りの実装項目
+
+### スタイル分析
+- **`seo-article-style-analysis.md`**
+- **`seo-article-style-analysis-v2.md`**
+  - SEO記事のスタイル分析結果
+
+### 実装済み機能（TODO.mdより）
+- ✅ CSVバッチ処理機能（完了）
+- ✅ 自動加工モード（完了）
+
+### 主要ファイル
+- `server/seoArticleGenerator.ts` - SEO記事生成ロジック
+- `server/seoArticleJobProcessor.ts` - バックグラウンドジョブ処理
+- `server/articleEnhancer.ts` - 記事の自動加工処理
+- `client/src/pages/SEOArticle.tsx` - フロントエンドUI
+
+---
+
+## 🎬 動画生成機能関連
+
+### 実装計画書
+- **`VIDEO_GENERATION_IMPLEMENTATION_PLAN.md`** ⭐
+  - 動画生成機能の完全実装計画
+  - 9ステップの処理フロー、システムアーキテクチャ
+  - **動画生成機能の開発時に必読**
+
+- **`VOICEVOX_TTS_INTEGRATION.md`**
+  - VoiceVox音声生成機能の統合方法
+  - 現在は一時的に無効化（ENABLE_VOICE=false）
+
+### 実装状況（TODO.mdより）
+- ✅ シナリオ生成機能（完了）
+- ✅ スライド生成機能（完了）
+- ✅ 動画合成機能（完了）
+- ✅ ジョブ管理システム（完了）
+- ⚠️ VoiceVox音声生成機能（一時的に無効化、実装予定）
+
+### 主要ファイル
+- `server/videoGenerator.ts` - 動画生成ロジック
+- `server/videoComposer.ts` - 動画合成処理（ENABLE_VOICEフラグで制御）
+- `server/videoRenderer.ts` - 動画レンダリング
+- `server/voicevoxClient.ts` - VoiceVox API呼び出し（DO NOT remove）
+- `server/videoGenerationWorker.ts` - バックグラウンドワーカー
+- `client/src/pages/VideoGeneration.tsx` - フロントエンドUI
+
+---
+
+## 🎥 動画分析機能関連（保護対象）
+
+### 詳細ドキュメント
+- **`VIDEO_ANALYSIS_DEEP_DIVE.md`** ⭐
+  - 動画分析機能の超詳細技術ドキュメント
+  - 処理フロー、実装コード完全版
+  - **⚠️ 保護対象機能のため、変更時は必ず相談**
+
+### 主要ファイル（保護対象）
+- `server/videoProcessor.ts` - 動画処理のメインロジック
+- `server/routers.ts` - `video.analyze` エンドポイント
+- `server/db.ts` - データベース操作関数
+- `client/src/pages/Analysis.tsx` - フロントエンドUI
+
+---
+
+## 🔧 移行・開発ガイド
+
+- **`CURSOR_MIGRATION_GUIDE.md`**
+  - Cursor移行時のガイド
+  - TypeScriptエラーの詳細、Manus組み込みAPIの置き換え方法
+
+- **`SETUP_GUIDE.md`**
+  - セットアップ手順、トラブルシューティング
+
+- **`TECHNICAL_DOCUMENTATION.md`**
+  - 技術詳細ドキュメント
+
+---
+
+## 📋 開発時の参照方法
+
+### 推奨ワークフロー
+
+1. **機能開発を始める前**
+   - `COMPLETE_TECHNICAL_SPECIFICATION.md`で全体像を把握
+   - 該当機能の実装設計書を読む
+
+2. **実装中**
+   - 該当機能のMDファイルを都度参照
+   - 関連するコードファイルも確認
+
+3. **問題が発生した場合**
+   - `SETUP_GUIDE.md`のトラブルシューティングを確認
+   - `CURSOR_MIGRATION_GUIDE.md`で移行時の注意点を確認
+
+### 注意事項
+
+- **動画分析機能は保護対象**のため、変更時は必ず相談
+- 既存の動作・見た目・機能を勝手に変更しない
+- 変更が必要な場合は、事前に理由と内容を説明し、承認を得る
+
+---
+
+## 🔄 ドキュメントの更新
+
+このマップは、新しいドキュメントが追加された際に更新してください。

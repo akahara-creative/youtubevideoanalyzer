@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, conversationId, role, LEFT(content, 300) as content_preview, createdAt FROM chatMessages WHERE conversationId >= 40000 ORDER BY createdAt DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, conversationId, role, LEFT(content, 300) as content_preview, createdAt FROM chatMessages WHERE conversationId >= 40000 ORDER BY createdAt DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "90005",
+      "conversationId": "60002",
+      "role": "user",
+      "content_preview": "ネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください",
+      "createdAt": "2025-11-09 03:15:31"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tconversationId\trole\tcontent_preview\tcreatedAt\n90005\t60002\tuser\tネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください\t2025-11-09 03:15:31\n",
+  "stderr": "",
+  "execution_time_ms": 1532
+}

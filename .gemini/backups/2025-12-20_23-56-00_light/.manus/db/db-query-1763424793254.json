@@ -1,0 +1,20 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE id = 60006",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, createdAt, updatedAt FROM videoGenerationJobs WHERE id = 60006",
+  "rows": [
+    {
+      "id": "60006",
+      "theme": "投資入門",
+      "status": "processing",
+      "currentStep": "2",
+      "progress": "15",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-17 23:59:55",
+      "updatedAt": "2025-11-18 00:09:26"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tcreatedAt\tupdatedAt\n60006\t投資入門\tprocessing\t2\t15\tNULL\t2025-11-17 23:59:55\t2025-11-18 00:09:26\n",
+  "stderr": "",
+  "execution_time_ms": 1586
+}

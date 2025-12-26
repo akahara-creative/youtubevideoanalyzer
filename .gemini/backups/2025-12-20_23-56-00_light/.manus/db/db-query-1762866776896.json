@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `seoArticleEnhancements` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`jobId` int NOT NULL,\n\t`userId` int NOT NULL,\n\t`originalArticle` longtext,\n\t`enhancedArticle` longtext,\n\t`aioSummary` longtext,\n\t`faqSection` longtext,\n\t`jsonLd` longtext,\n\t`metaInfo` longtext,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `seoArticleEnhancements_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE IF NOT EXISTS `seoArticleEnhancements` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`jobId` int NOT NULL,\n\t`userId` int NOT NULL,\n\t`originalArticle` longtext,\n\t`enhancedArticle` longtext,\n\t`aioSummary` longtext,\n\t`faqSection` longtext,\n\t`jsonLd` longtext,\n\t`metaInfo` longtext,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `seoArticleEnhancements_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1810
+}

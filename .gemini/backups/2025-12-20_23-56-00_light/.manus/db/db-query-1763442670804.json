@@ -1,0 +1,12 @@
+{
+  "query": "SELECT id, theme, status, errorMessage, createdAt FROM videoGenerationJobs WHERE theme = 'プログラミング基礎' ORDER BY id DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, errorMessage, createdAt FROM videoGenerationJobs WHERE theme = 'プログラミング基礎' ORDER BY id DESC LIMIT 1;",
+  "rows": [],
+  "messages": [
+    "60013\tプログラミング基礎\tfailed\tFailed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)",
+    "params: 60013,1,15,45,240\t2025-11-18 04:43:59"
+  ],
+  "stdout": "id\ttheme\tstatus\terrorMessage\tcreatedAt\n60013\tプログラミング基礎\tfailed\tFailed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)\nparams: 60013,1,15,45,240\t2025-11-18 04:43:59\n",
+  "stderr": "",
+  "execution_time_ms": 1552
+}

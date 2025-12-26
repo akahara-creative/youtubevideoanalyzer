@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE videoStrategy \nADD COLUMN targetAudience VARCHAR(500) AFTER userRules,\nADD COLUMN painPoints LONGTEXT AFTER targetAudience,\nADD COLUMN desiredOutcome TEXT AFTER painPoints,\nADD COLUMN uniqueValueProposition TEXT AFTER desiredOutcome;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute ALTER TABLE videoStrategy \nADD COLUMN targetAudience VARCHAR(500) AFTER userRules,\nADD COLUMN painPoints LONGTEXT AFTER targetAudience,\nADD COLUMN desiredOutcome TEXT AFTER painPoints,\nADD COLUMN uniqueValueProposition TEXT AFTER desiredOutcome;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'targetaudience' in 'videoStrategy'"
+  ]
+}

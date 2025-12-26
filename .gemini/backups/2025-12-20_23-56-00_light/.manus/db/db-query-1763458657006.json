@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, benchmarkAnalysisId, strategyId, scenarioId, slideDesignId \nFROM videoGenerationJobs \nWHERE id = 60023",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, benchmarkAnalysisId, strategyId, scenarioId, slideDesignId \nFROM videoGenerationJobs \nWHERE id = 60023",
+  "rows": [
+    {
+      "id": "60023",
+      "theme": "スキーマ修正後テスト",
+      "status": "failed",
+      "currentStep": "5",
+      "progress": "50",
+      "errorMessage": "Unknown column 'hookDuration' in 'field list'",
+      "benchmarkAnalysisId": "60093",
+      "strategyId": "30070",
+      "scenarioId": "NULL",
+      "slideDesignId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tbenchmarkAnalysisId\tstrategyId\tscenarioId\tslideDesignId\n60023\tスキーマ修正後テスト\tfailed\t5\t50\tUnknown column 'hookDuration' in 'field list'\t60093\t30070\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1518
+}

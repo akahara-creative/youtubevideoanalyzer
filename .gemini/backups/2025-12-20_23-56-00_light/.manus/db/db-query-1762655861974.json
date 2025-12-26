@@ -1,0 +1,9 @@
+{
+  "query": "SELECT cm.id, cm.conversationId, cm.role, SUBSTRING(cm.content, 1, 100) as content_preview, cc.title\nFROM chatMessages cm\nJOIN chatConversations cc ON cm.conversationId = cc.id\nWHERE cm.content LIKE '%ネットビジネスで稼げない人%'\nORDER BY cm.createdAt DESC\nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT cm.id, cm.conversationId, cm.role, SUBSTRING(cm.content, 1, 100) as content_preview, cc.title\nFROM chatMessages cm\nJOIN chatConversations cc ON cm.conversationId = cc.id\nWHERE cm.content LIKE '%ネットビジネスで稼げない人%'\nORDER BY cm.createdAt DESC\nLIMIT 5;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1549
+}

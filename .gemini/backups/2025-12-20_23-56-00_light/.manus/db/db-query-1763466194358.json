@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, userId, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, userId, theme, status, currentStep, progress, createdAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "60030",
+      "userId": "1",
+      "theme": "スキーマ修正後の完全テスト",
+      "status": "processing",
+      "currentStep": "6",
+      "progress": "65",
+      "createdAt": "2025-11-18 11:41:51"
+    },
+    {
+      "id": "60029",
+      "userId": "1",
+      "theme": "完全動作確認",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80",
+      "createdAt": "2025-11-18 10:57:04"
+    },
+    {
+      "id": "60028",
+      "userId": "1",
+      "theme": "最終修正テスト",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80",
+      "createdAt": "2025-11-18 10:41:51"
+    },
+    {
+      "id": "60027",
+      "userId": "1",
+      "theme": "サーバー再起動後テスト",
+      "status": "failed",
+      "currentStep": "2",
+      "progress": "15",
+      "createdAt": "2025-11-18 10:23:55"
+    },
+    {
+      "id": "60026",
+      "userId": "1",
+      "theme": "jobId修正テスト",
+      "status": "failed",
+      "currentStep": "2",
+      "progress": "15",
+      "createdAt": "2025-11-18 10:08:52"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttheme\tstatus\tcurrentStep\tprogress\tcreatedAt\n60030\t1\tスキーマ修正後の完全テスト\tprocessing\t6\t65\t2025-11-18 11:41:51\n60029\t1\t完全動作確認\tfailed\t8\t80\t2025-11-18 10:57:04\n60028\t1\t最終修正テスト\tfailed\t8\t80\t2025-11-18 10:41:51\n60027\t1\tサーバー再起動後テスト\tfailed\t2\t15\t2025-11-18 10:23:55\n60026\t1\tjobId修正テスト\tfailed\t2\t15\t2025-11-18 10:08:52\n",
+  "stderr": "",
+  "execution_time_ms": 1553
+}

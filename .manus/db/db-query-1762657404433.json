@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, fileName, isPinned FROM contentImports ORDER BY createdAt DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, fileName, isPinned FROM contentImports ORDER BY createdAt DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "90005",
+      "fileName": "AIAkaharaLogic_writing.txt",
+      "isPinned": "0"
+    },
+    {
+      "id": "90004",
+      "fileName": "AIAkaharaLogic_plot.txt",
+      "isPinned": "0"
+    },
+    {
+      "id": "90003",
+      "fileName": "洞察資料.txt",
+      "isPinned": "0"
+    },
+    {
+      "id": "60006",
+      "fileName": "人を引き込む「面白さ」のポイント.txt",
+      "isPinned": "0"
+    },
+    {
+      "id": "60005",
+      "fileName": "執筆・コンテンツ生成の作業.txt",
+      "isPinned": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tfileName\tisPinned\n90005\tAIAkaharaLogic_writing.txt\t0\n90004\tAIAkaharaLogic_plot.txt\t0\n90003\t洞察資料.txt\t0\n60006\t人を引き込む「面白さ」のポイント.txt\t0\n60005\t執筆・コンテンツ生成の作業.txt\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1553
+}

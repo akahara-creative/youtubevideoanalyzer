@@ -1,0 +1,30 @@
+{
+  "query": "SELECT * FROM videoAnalyses ORDER BY id DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT * FROM videoAnalyses ORDER BY id DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "540005",
+      "userId": "1",
+      "youtubeUrl": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+      "videoId": "9bZkp7q19f0",
+      "title": "NULL",
+      "status": "processing",
+      "summary": "NULL",
+      "learningPoints": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-20 23:33:38",
+      "updatedAt": "2025-11-20 23:33:38",
+      "shareToken": "NULL",
+      "isPublic": "0",
+      "currentStep": "NULL",
+      "progress": "0",
+      "estimatedTimeRemaining": "NULL",
+      "stepProgress": "NULL",
+      "errorDetails": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tyoutubeUrl\tvideoId\ttitle\tstatus\tsummary\tlearningPoints\terrorMessage\tcreatedAt\tupdatedAt\tshareToken\tisPublic\tcurrentStep\tprogress\testimatedTimeRemaining\tstepProgress\terrorDetails\n540005\t1\thttps://www.youtube.com/watch?v=9bZkp7q19f0\t9bZkp7q19f0\tNULL\tprocessing\tNULL\tNULL\tNULL\t2025-11-20 23:33:38\t2025-11-20 23:33:38\tNULL\t0\tNULL\t0\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1627
+}

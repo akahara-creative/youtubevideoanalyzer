@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE videoScenario\nADD COLUMN IF NOT EXISTS hookContent TEXT,\nADD COLUMN IF NOT EXISTS hookPurpose TEXT,\nADD COLUMN IF NOT EXISTS problemContent TEXT,\nADD COLUMN IF NOT EXISTS problemContext TEXT,\nADD COLUMN IF NOT EXISTS solutionContent TEXT,\nADD COLUMN IF NOT EXISTS solutionBenefits TEXT,\nADD COLUMN IF NOT EXISTS ctaContent TEXT,\nADD COLUMN IF NOT EXISTS ctaPurpose TEXT,\nADD COLUMN IF NOT EXISTS hookSeconds INT,\nADD COLUMN IF NOT EXISTS problemSeconds INT,\nADD COLUMN IF NOT EXISTS solutionSeconds INT,\nADD COLUMN IF NOT EXISTS ctaSeconds INT,\nADD COLUMN IF NOT EXISTS totalSeconds INT,\nADD COLUMN IF NOT EXISTS ragReferencesJson TEXT,\nADD COLUMN IF NOT EXISTS userRulesJson TEXT",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute ALTER TABLE videoScenario\nADD COLUMN IF NOT EXISTS hookContent TEXT,\nADD COLUMN IF NOT EXISTS hookPurpose TEXT,\nADD COLUMN IF NOT EXISTS problemContent TEXT,\nADD COLUMN IF NOT EXISTS problemContext TEXT,\nADD COLUMN IF NOT EXISTS solutionContent TEXT,\nADD COLUMN IF NOT EXISTS solutionBenefits TEXT,\nADD COLUMN IF NOT EXISTS ctaContent TEXT,\nADD COLUMN IF NOT EXISTS ctaPurpose TEXT,\nADD COLUMN IF NOT EXISTS hookSeconds INT,\nADD COLUMN IF NOT EXISTS problemSeconds INT,\nADD COLUMN IF NOT EXISTS solutionSeconds INT,\nADD COLUMN IF NOT EXISTS ctaSeconds INT,\nADD COLUMN IF NOT EXISTS totalSeconds INT,\nADD COLUMN IF NOT EXISTS ragReferencesJson TEXT,\nADD COLUMN IF NOT EXISTS userRulesJson TEXT",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 4284
+}

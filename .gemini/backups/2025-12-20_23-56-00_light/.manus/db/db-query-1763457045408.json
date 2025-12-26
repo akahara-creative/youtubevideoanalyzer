@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE videoGenerationJobs SET status = 'failed', errorMessage = 'Cancelled for testing' WHERE id = 60022",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute UPDATE videoGenerationJobs SET status = 'failed', errorMessage = 'Cancelled for testing' WHERE id = 60022",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1588
+}

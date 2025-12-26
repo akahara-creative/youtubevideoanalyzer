@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE videoScenario \nDROP COLUMN IF EXISTS strategyId,\nDROP COLUMN IF EXISTS hook,\nDROP COLUMN IF EXISTS problemPresentation,\nDROP COLUMN IF EXISTS solution,\nDROP COLUMN IF EXISTS hookDuration,\nDROP COLUMN IF EXISTS problemDuration,\nDROP COLUMN IF EXISTS solutionDuration,\nDROP COLUMN IF EXISTS totalDuration,\nDROP COLUMN IF EXISTS ragReferences,\nDROP COLUMN IF EXISTS userRules",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute ALTER TABLE videoScenario \nDROP COLUMN IF EXISTS strategyId,\nDROP COLUMN IF EXISTS hook,\nDROP COLUMN IF EXISTS problemPresentation,\nDROP COLUMN IF EXISTS solution,\nDROP COLUMN IF EXISTS hookDuration,\nDROP COLUMN IF EXISTS problemDuration,\nDROP COLUMN IF EXISTS solutionDuration,\nDROP COLUMN IF EXISTS totalDuration,\nDROP COLUMN IF EXISTS ragReferences,\nDROP COLUMN IF EXISTS userRules",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2610
+}

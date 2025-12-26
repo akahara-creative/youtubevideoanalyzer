@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, theme, status FROM seoArticleJobs WHERE status = 'pending' LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status FROM seoArticleJobs WHERE status = 'pending' LIMIT 1",
+  "rows": [
+    {
+      "id": "1",
+      "theme": "AIツールの選び方",
+      "status": "pending"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\n1\tAIツールの選び方\tpending\n",
+  "stderr": "",
+  "execution_time_ms": 1533
+}

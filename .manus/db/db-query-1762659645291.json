@@ -1,0 +1,16 @@
+{
+  "query": "SHOW TABLES LIKE 'chat%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW TABLES LIKE 'chat%';",
+  "rows": [
+    {
+      "Tables_in_NYSDZ3CUp62WRWmJyXH7Fz (chat%)": "chatConversations"
+    },
+    {
+      "Tables_in_NYSDZ3CUp62WRWmJyXH7Fz (chat%)": "chatMessages"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_NYSDZ3CUp62WRWmJyXH7Fz (chat%)\nchatConversations\nchatMessages\n",
+  "stderr": "",
+  "execution_time_ms": 1526
+}

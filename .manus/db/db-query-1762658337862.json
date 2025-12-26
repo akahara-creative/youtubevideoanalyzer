@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, conversationId, role, LEFT(content, 200) as content_preview, createdAt FROM chatMessages ORDER BY createdAt DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, conversationId, role, LEFT(content, 200) as content_preview, createdAt FROM chatMessages ORDER BY createdAt DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "90005",
+      "conversationId": "60002",
+      "role": "user",
+      "content_preview": "ネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください",
+      "createdAt": "2025-11-09 03:15:31"
+    },
+    {
+      "id": "2",
+      "conversationId": "1",
+      "role": "user",
+      "content_preview": "こんにちは",
+      "createdAt": "2025-11-08 01:44:52"
+    },
+    {
+      "id": "1",
+      "conversationId": "1",
+      "role": "user",
+      "content_preview": "過去に分析した動画の内容を参考にして、その動画について紹介するメールを作成してください",
+      "createdAt": "2025-11-08 01:37:51"
+    }
+  ],
+  "messages": [
+    "3\t1\tassistant\t承知いたしました。YouTube動画分析アシスタントとして、過去の分析結果を参考に、その動画を紹介するメールを作成します。",
+    "ただし、今回は具体的な動画のタイトルや分析データが提供されていませんので、**「過去に高い評価を得た、視聴者のエンゲージメントが非常に高かった動画」**という仮定のもと、汎用的に使用できるメールテンプレートを作成します。",
+    "このテンプレートは、特に視聴者の関心が高かったポイ\t2025-11-08 01:45:02"
+  ],
+  "stdout": "id\tconversationId\trole\tcontent_preview\tcreatedAt\n90005\t60002\tuser\tネットビジネスで稼げない人は、料理を学ぶべき理由について、3000文字程度の記事を書いてください\t2025-11-09 03:15:31\n3\t1\tassistant\t承知いたしました。YouTube動画分析アシスタントとして、過去の分析結果を参考に、その動画を紹介するメールを作成します。\n\nただし、今回は具体的な動画のタイトルや分析データが提供されていませんので、**「過去に高い評価を得た、視聴者のエンゲージメントが非常に高かった動画」**という仮定のもと、汎用的に使用できるメールテンプレートを作成します。\n\nこのテンプレートは、特に視聴者の関心が高かったポイ\t2025-11-08 01:45:02\n2\t1\tuser\tこんにちは\t2025-11-08 01:44:52\n1\t1\tuser\t過去に分析した動画の内容を参考にして、その動画について紹介するメールを作成してください\t2025-11-08 01:37:51\n",
+  "stderr": "",
+  "execution_time_ms": 1600
+}

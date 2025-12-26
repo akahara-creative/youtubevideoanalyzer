@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `chatConversations` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `title` varchar(255),\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);\n\nCREATE TABLE IF NOT EXISTS `chatMessages` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `conversationId` int NOT NULL,\n  `role` enum('user', 'assistant') NOT NULL,\n  `content` text NOT NULL,\n  `ragContext` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE IF NOT EXISTS `chatConversations` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `title` varchar(255),\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);\n\nCREATE TABLE IF NOT EXISTS `chatMessages` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `conversationId` int NOT NULL,\n  `role` enum('user', 'assistant') NOT NULL,\n  `content` text NOT NULL,\n  `ragContext` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2052
+}

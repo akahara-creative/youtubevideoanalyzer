@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as count FROM ragDocuments",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT COUNT(*) as count FROM ragDocuments",
+  "rows": [
+    {
+      "count": "113"
+    }
+  ],
+  "messages": [],
+  "stdout": "count\n113\n",
+  "stderr": "",
+  "execution_time_ms": 1616
+}

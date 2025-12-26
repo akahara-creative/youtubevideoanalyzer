@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'NYSDZ3CUp62WRWmJyXH7Fz' AND TABLE_NAME = 'seoArticleJobs' AND COLUMN_NAME = 'status'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'NYSDZ3CUp62WRWmJyXH7Fz' AND TABLE_NAME = 'seoArticleJobs' AND COLUMN_NAME = 'status'",
+  "rows": [
+    {
+      "COLUMN_TYPE": "enum('pending','processing','completed','failed','cancelled')"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_TYPE\nenum('pending','processing','completed','failed','cancelled')\n",
+  "stderr": "",
+  "execution_time_ms": 1661
+}

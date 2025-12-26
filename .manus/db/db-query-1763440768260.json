@@ -1,0 +1,34 @@
+{
+  "query": "SHOW CREATE TABLE videoScenario;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SHOW CREATE TABLE videoScenario;",
+  "rows": [
+    {
+      "Table": "videoScenario",
+      "Create Table": "CREATE TABLE `videoScenario` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `jobId` int(11) NOT NULL,",
+    "  `userId` int(11) NOT NULL,",
+    "  `hookContent` longtext DEFAULT NULL,",
+    "  `hookDuration` int(11) DEFAULT NULL,",
+    "  `hookPurpose` longtext DEFAULT NULL,",
+    "  `problemContent` longtext DEFAULT NULL,",
+    "  `problemDuration` int(11) DEFAULT NULL,",
+    "  `problemPurpose` longtext DEFAULT NULL,",
+    "  `solutionContent` longtext DEFAULT NULL,",
+    "  `solutionDuration` int(11) DEFAULT NULL,",
+    "  `solutionPurpose` longtext DEFAULT NULL,",
+    "  `ctaContent` longtext DEFAULT NULL,",
+    "  `ctaDuration` int(11) DEFAULT NULL,",
+    "  `ctaPurpose` longtext DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=30001"
+  ],
+  "stdout": "Table\tCreate Table\nvideoScenario\tCREATE TABLE `videoScenario` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `jobId` int(11) NOT NULL,\n  `userId` int(11) NOT NULL,\n  `hookContent` longtext DEFAULT NULL,\n  `hookDuration` int(11) DEFAULT NULL,\n  `hookPurpose` longtext DEFAULT NULL,\n  `problemContent` longtext DEFAULT NULL,\n  `problemDuration` int(11) DEFAULT NULL,\n  `problemPurpose` longtext DEFAULT NULL,\n  `solutionContent` longtext DEFAULT NULL,\n  `solutionDuration` int(11) DEFAULT NULL,\n  `solutionPurpose` longtext DEFAULT NULL,\n  `ctaContent` longtext DEFAULT NULL,\n  `ctaDuration` int(11) DEFAULT NULL,\n  `ctaPurpose` longtext DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=30001\n",
+  "stderr": "",
+  "execution_time_ms": 1490
+}

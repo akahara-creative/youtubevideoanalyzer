@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, userId, title, keywordProjectId, createdAt FROM chatConversations ORDER BY createdAt DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, userId, title, keywordProjectId, createdAt FROM chatConversations ORDER BY createdAt DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "60002",
+      "userId": "1",
+      "title": "テスト会話（あなた禁止）",
+      "keywordProjectId": "30001",
+      "createdAt": "2025-11-09 03:13:41"
+    },
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "新しい会話",
+      "keywordProjectId": "NULL",
+      "createdAt": "2025-11-08 01:36:44"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttitle\tkeywordProjectId\tcreatedAt\n60002\t1\tテスト会話（あなた禁止）\t30001\t2025-11-09 03:13:41\n1\t1\t新しい会話\tNULL\t2025-11-08 01:36:44\n",
+  "stderr": "",
+  "execution_time_ms": 1516
+}

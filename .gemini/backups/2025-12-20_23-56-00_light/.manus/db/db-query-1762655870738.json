@@ -1,0 +1,29 @@
+{
+  "query": "SELECT cm.id, cm.conversationId, cm.role, SUBSTRING(cm.content, 1, 150) as content_preview, cc.title, cm.createdAt\nFROM chatMessages cm\nJOIN chatConversations cc ON cm.conversationId = cc.id\nORDER BY cm.createdAt DESC\nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT cm.id, cm.conversationId, cm.role, SUBSTRING(cm.content, 1, 150) as content_preview, cc.title, cm.createdAt\nFROM chatMessages cm\nJOIN chatConversations cc ON cm.conversationId = cc.id\nORDER BY cm.createdAt DESC\nLIMIT 10;",
+  "rows": [
+    {
+      "id": "2",
+      "conversationId": "1",
+      "role": "user",
+      "content_preview": "こんにちは",
+      "title": "新しい会話",
+      "createdAt": "2025-11-08 01:44:52"
+    },
+    {
+      "id": "1",
+      "conversationId": "1",
+      "role": "user",
+      "content_preview": "過去に分析した動画の内容を参考にして、その動画について紹介するメールを作成してください",
+      "title": "新しい会話",
+      "createdAt": "2025-11-08 01:37:51"
+    }
+  ],
+  "messages": [
+    "3\t1\tassistant\t承知いたしました。YouTube動画分析アシスタントとして、過去の分析結果を参考に、その動画を紹介するメールを作成します。",
+    "ただし、今回は具体的な動画のタイトルや分析データが提供されていませんので、**「過去に高い評価を得た、視聴者のエンゲージメントが非常に高かった動画」**という仮定のもと、汎用\t新しい会話\t2025-11-08 01:45:02"
+  ],
+  "stdout": "id\tconversationId\trole\tcontent_preview\ttitle\tcreatedAt\n3\t1\tassistant\t承知いたしました。YouTube動画分析アシスタントとして、過去の分析結果を参考に、その動画を紹介するメールを作成します。\n\nただし、今回は具体的な動画のタイトルや分析データが提供されていませんので、**「過去に高い評価を得た、視聴者のエンゲージメントが非常に高かった動画」**という仮定のもと、汎用\t新しい会話\t2025-11-08 01:45:02\n2\t1\tuser\tこんにちは\t新しい会話\t2025-11-08 01:44:52\n1\t1\tuser\t過去に分析した動画の内容を参考にして、その動画について紹介するメールを作成してください\t新しい会話\t2025-11-08 01:37:51\n",
+  "stderr": "",
+  "execution_time_ms": 1604
+}

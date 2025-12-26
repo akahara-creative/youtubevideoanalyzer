@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `seoArticles` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `theme` varchar(500) NOT NULL,\n  `keywords` longtext,\n  `analyses` longtext,\n  `criteria` longtext,\n  `structure` longtext,\n  `article` longtext NOT NULL,\n  `qualityCheck` longtext,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE IF NOT EXISTS `seoArticles` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `theme` varchar(500) NOT NULL,\n  `keywords` longtext,\n  `analyses` longtext,\n  `criteria` longtext,\n  `structure` longtext,\n  `article` longtext NOT NULL,\n  `qualityCheck` longtext,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1734
+}

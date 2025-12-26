@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `contentImports` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `fileName` varchar(255) NOT NULL,\n  `fileType` enum('txt', 'docx', 'pdf') NOT NULL,\n  `fileUrl` varchar(1000) NOT NULL,\n  `fileKey` varchar(500) NOT NULL,\n  `fileSize` int,\n  `extractedText` text,\n  `category` varchar(100),\n  `tags` text,\n  `notes` text,\n  `ragId` varchar(100),\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE `contentImports` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `userId` int NOT NULL,\n  `fileName` varchar(255) NOT NULL,\n  `fileType` enum('txt', 'docx', 'pdf') NOT NULL,\n  `fileUrl` varchar(1000) NOT NULL,\n  `fileKey` varchar(500) NOT NULL,\n  `fileSize` int,\n  `extractedText` text,\n  `category` varchar(100),\n  `tags` text,\n  `notes` text,\n  `ragId` varchar(100),\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1618
+}

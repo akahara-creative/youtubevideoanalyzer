@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, jobId, userId, createdAt FROM seoArticleEnhancements ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, jobId, userId, createdAt FROM seoArticleEnhancements ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "30001",
+      "jobId": "900001",
+      "userId": "1",
+      "createdAt": "2025-11-11 15:16:39"
+    },
+    {
+      "id": "1",
+      "jobId": "900001",
+      "userId": "1",
+      "createdAt": "2025-11-11 14:59:56"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tjobId\tuserId\tcreatedAt\n30001\t900001\t1\t2025-11-11 15:16:39\n1\t900001\t1\t2025-11-11 14:59:56\n",
+  "stderr": "",
+  "execution_time_ms": 1543
+}

@@ -1,0 +1,18 @@
+{
+  "query": "SELECT jobId, userId, LEFT(faqSection, 200) as faqPreview FROM seoArticleEnhancements WHERE faqSection IS NOT NULL ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT jobId, userId, LEFT(faqSection, 200) as faqPreview FROM seoArticleEnhancements WHERE faqSection IS NOT NULL ORDER BY createdAt DESC LIMIT 1",
+  "rows": [
+    {
+      "jobId": "900001",
+      "userId": "1",
+      "faqPreview": "## よくある質問（FAQ）"
+    }
+  ],
+  "messages": [
+    "### Q1: ステップメールとは何ですか？なぜSEOやSNS集客で疲弊している人に必要なのでしょうか？",
+    "A: ステップメールとは、見込み客がリストに登録した日時を起点に、事前に設定されたシナリオ（複数のメール）を自動で送信する仕組みです。SEOやSNS集客（バズ、プレゼント企画など）で集めた見込み客は、すぐに商品を購入するわけではありません。ステップメールは、この"
+  ],
+  "stdout": "jobId\tuserId\tfaqPreview\n900001\t1\t## よくある質問（FAQ）\n\n### Q1: ステップメールとは何ですか？なぜSEOやSNS集客で疲弊している人に必要なのでしょうか？\nA: ステップメールとは、見込み客がリストに登録した日時を起点に、事前に設定されたシナリオ（複数のメール）を自動で送信する仕組みです。SEOやSNS集客（バズ、プレゼント企画など）で集めた見込み客は、すぐに商品を購入するわけではありません。ステップメールは、この\n",
+  "stderr": "",
+  "execution_time_ms": 1569
+}

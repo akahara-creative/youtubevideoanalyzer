@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `longContents` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`userId` int NOT NULL,\n\t`title` varchar(500) NOT NULL,\n\t`prompt` text NOT NULL,\n\t`content` text,\n\t`targetWordCount` int,\n\t`actualWordCount` int,\n\t`status` enum('pending','generating','completed','failed') NOT NULL DEFAULT 'pending',\n\t`contentType` enum('blog','article','essay','report') NOT NULL DEFAULT 'blog',\n\t`tone` varchar(100),\n\t`keywords` text,\n\t`seoScore` int,\n\t`ragId` varchar(100),\n\t`errorMessage` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\t`completedAt` timestamp,\n\tCONSTRAINT `longContents_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute CREATE TABLE IF NOT EXISTS `longContents` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`userId` int NOT NULL,\n\t`title` varchar(500) NOT NULL,\n\t`prompt` text NOT NULL,\n\t`content` text,\n\t`targetWordCount` int,\n\t`actualWordCount` int,\n\t`status` enum('pending','generating','completed','failed') NOT NULL DEFAULT 'pending',\n\t`contentType` enum('blog','article','essay','report') NOT NULL DEFAULT 'blog',\n\t`tone` varchar(100),\n\t`keywords` text,\n\t`seoScore` int,\n\t`ragId` varchar(100),\n\t`errorMessage` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\t`completedAt` timestamp,\n\tCONSTRAINT `longContents_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1647
+}

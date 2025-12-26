@@ -1,0 +1,1 @@
+ALTER TABLE `videoGenerationJobs` ADD `speakerId` int DEFAULT 3;

@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, createdAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, createdAt FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "2",
+      "theme": "ステップメールの書き方",
+      "status": "failed",
+      "currentStep": "1",
+      "progress": "5",
+      "errorMessage": "The requested module './videoProcessor' does not provide an export named 'processVideo'",
+      "createdAt": "2025-11-17 10:48:42"
+    },
+    {
+      "id": "1",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "failed",
+      "currentStep": "1",
+      "progress": "5",
+      "errorMessage": "The requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'",
+      "createdAt": "2025-11-17 10:42:52"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tcreatedAt\n2\tステップメールの書き方\tfailed\t1\t5\tThe requested module './videoProcessor' does not provide an export named 'processVideo'\t2025-11-17 10:48:42\n1\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tfailed\t1\t5\tThe requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'\t2025-11-17 10:42:52\n",
+  "stderr": "",
+  "execution_time_ms": 1524
+}

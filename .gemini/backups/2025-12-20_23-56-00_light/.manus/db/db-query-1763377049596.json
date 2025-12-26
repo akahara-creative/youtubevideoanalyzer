@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id, theme, status, currentStep, progress, errorMessage, updatedAt FROM videoGenerationJobs WHERE id = 2",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, status, currentStep, progress, errorMessage, updatedAt FROM videoGenerationJobs WHERE id = 2",
+  "rows": [
+    {
+      "id": "2",
+      "theme": "ステップメールの書き方",
+      "status": "processing",
+      "currentStep": "2",
+      "progress": "15",
+      "errorMessage": "NULL",
+      "updatedAt": "2025-11-17 10:54:22"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttheme\tstatus\tcurrentStep\tprogress\terrorMessage\tupdatedAt\n2\tステップメールの書き方\tprocessing\t2\t15\tNULL\t2025-11-17 10:54:22\n",
+  "stderr": "",
+  "execution_time_ms": 1533
+}

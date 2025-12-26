@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, theme, userId, status, currentStep, errorMessage FROM videoGenerationJobs ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, theme, userId, status, currentStep, errorMessage FROM videoGenerationJobs ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "60018",
+      "theme": "リロードテスト",
+      "userId": "1",
+      "status": "failed",
+      "currentStep": "8",
+      "errorMessage": "Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "id": "60017",
+      "theme": "最終確認",
+      "userId": "1",
+      "status": "failed",
+      "currentStep": "5",
+      "errorMessage": "Failed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)"
+    },
+    {
+      "id": "60016",
+      "theme": "完全テスト",
+      "userId": "1",
+      "status": "failed",
+      "currentStep": "5",
+      "errorMessage": "Failed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)"
+    },
+    {
+      "id": "60015",
+      "theme": "最終テスト",
+      "userId": "1",
+      "status": "failed",
+      "currentStep": "8",
+      "errorMessage": "Failed query: select `id`, `jobId`, `userId`, `scenarioId`, `slides`, `fontFamily`, `fontSize`, `colorScheme`, `layout`, `ragReferences`, `userRules`, `createdAt`, `updatedAt` from `videoSlideDesign` where `videoSlideDesign`.`jobId` = ? order by "
+    },
+    {
+      "id": "60014",
+      "theme": "デバッグテスト",
+      "userId": "1",
+      "status": "failed",
+      "currentStep": "6",
+      "errorMessage": "Failed query: insert into `videoSlideDesign` (`id`, `jobId`, `userId`, `scenarioId`, `slides`, `fontFamily`, `fontSize`, `colorScheme`, `layout`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, default, default, default, default, default, default)"
+    }
+  ],
+  "messages": [
+    "params: 60017,1,15,45,240",
+    "params: 60016,1,15,45,240",
+    "params: 60015",
+    "params: 60014,1"
+  ],
+  "stdout": "id\ttheme\tuserId\tstatus\tcurrentStep\terrorMessage\n60018\tリロードテスト\t1\tfailed\t8\tNavigation timeout of 30000 ms exceeded\n60017\t最終確認\t1\tfailed\t5\tFailed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)\nparams: 60017,1,15,45,240\n60016\t完全テスト\t1\tfailed\t5\tFailed query: insert into `videoScenario` (`id`, `jobId`, `userId`, `strategyId`, `hook`, `problemPresentation`, `solution`, `hookDuration`, `problemDuration`, `solutionDuration`, `totalDuration`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, ?, ?, ?, default, default, default, default, default)\nparams: 60016,1,15,45,240\n60015\t最終テスト\t1\tfailed\t8\tFailed query: select `id`, `jobId`, `userId`, `scenarioId`, `slides`, `fontFamily`, `fontSize`, `colorScheme`, `layout`, `ragReferences`, `userRules`, `createdAt`, `updatedAt` from `videoSlideDesign` where `videoSlideDesign`.`jobId` = ? order by \nparams: 60015\n60014\tデバッグテスト\t1\tfailed\t6\tFailed query: insert into `videoSlideDesign` (`id`, `jobId`, `userId`, `scenarioId`, `slides`, `fontFamily`, `fontSize`, `colorScheme`, `layout`, `ragReferences`, `userRules`, `createdAt`, `updatedAt`) values (default, ?, ?, default, default, default, default, default, default, default, default, default, default)\nparams: 60014,1\n",
+  "stderr": "",
+  "execution_time_ms": 1573
+}

@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1763456803562,
+      "tag": "0000_deep_eddie_brock",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1763468338101,
+      "tag": "0001_volatile_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1763505923757,
+      "tag": "0002_serious_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1763643688363,
+      "tag": "0003_regular_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1763644383581,
+      "tag": "0004_uneven_deadpool",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1763865670898,
+      "tag": "0005_demonic_major_mapleleaf",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1764428235848,
+      "tag": "0006_illegal_texas_twister",
+      "breakpoints": true
+    }
+  ]
+}

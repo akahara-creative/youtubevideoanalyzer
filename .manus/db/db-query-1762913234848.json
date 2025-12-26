@@ -1,0 +1,41 @@
+{
+  "query": "SELECT ts.id, ts.startTime, \n  SUBSTRING(ts.transcription, 1, 200) as transcription_sample,\n  SUBSTRING(ts.visualDescription, 1, 200) as visual_sample\nFROM timelineSegments ts\nJOIN videoAnalyses va ON ts.analysisId = va.id\nWHERE va.videoId = 'bnZHnWLRaAQ'\nORDER BY ts.startTime\nLIMIT 3",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT ts.id, ts.startTime, \n  SUBSTRING(ts.transcription, 1, 200) as transcription_sample,\n  SUBSTRING(ts.visualDescription, 1, 200) as visual_sample\nFROM timelineSegments ts\nJOIN videoAnalyses va ON ts.analysisId = va.id\nWHERE va.videoId = 'bnZHnWLRaAQ'\nORDER BY ts.startTime\nLIMIT 3",
+  "rows": [
+    {
+      "id": "60001",
+      "startTime": "0",
+      "transcription_sample": "",
+      "visual_sample": "この動画フレームは、技術解説やプレゼンテーションに使用されることを想定した、洗練されたオーバーレイ（画面構成）デザインを示しています。"
+    },
+    {
+      "id": "60002",
+      "startTime": "30",
+      "transcription_sample": "",
+      "visual_sample": "この動画フレームは、動画制作の効率化、特に編集作業の負担軽減について説明しているプレゼンテーションまたは解説動画の一場面です。"
+    },
+    {
+      "id": "60003",
+      "startTime": "60",
+      "transcription_sample": "",
+      "visual_sample": "この画像は、動画制作のワークフローにおける「企画・サムネ作成」と「台本」の段階を説明しているプレゼンテーションスライドです。技術的な解説動画、特にAI関連のツールの紹介に関する内容であると推測されます。"
+    }
+  ],
+  "messages": [
+    "以下に、画面に表示されている内容の詳細を専門的に分析します。",
+    "### 1. 画面構成とデザイン",
+    "このフレームは、大きく分けて「メイン表示エリア」「オーバーレイフレーム」「キャラクター（プレゼンター）」の3つの要素で構成されています。",
+    "#### A. メイン",
+    "以下に、画面の詳細な分析を専門的に行います。",
+    "### 1. 全体の構成とデザイン",
+    "*   **テーマ:** ダークブルーを基調とした、未来的な、あるいは技術的なインターフェースデザインが採用されています。周囲には回路図のような装飾的な要素が見られます。",
+    "*   **",
+    "ここでは、**コードは直接表示されていません**が、動画制作の計画と台本作成に関する詳細なプロセスが説明されています。",
+    "---",
+    "### 画面全体の構成",
+    "画面は大きく分けて、左側の「企画・サ"
+  ],
+  "stdout": "id\tstartTime\ttranscription_sample\tvisual_sample\n60001\t0\t\tこの動画フレームは、技術解説やプレゼンテーションに使用されることを想定した、洗練されたオーバーレイ（画面構成）デザインを示しています。\n\n以下に、画面に表示されている内容の詳細を専門的に分析します。\n\n### 1. 画面構成とデザイン\n\nこのフレームは、大きく分けて「メイン表示エリア」「オーバーレイフレーム」「キャラクター（プレゼンター）」の3つの要素で構成されています。\n\n#### A. メイン\n60002\t30\t\tこの動画フレームは、動画制作の効率化、特に編集作業の負担軽減について説明しているプレゼンテーションまたは解説動画の一場面です。\n\n以下に、画面の詳細な分析を専門的に行います。\n\n### 1. 全体の構成とデザイン\n\n*   **テーマ:** ダークブルーを基調とした、未来的な、あるいは技術的なインターフェースデザインが採用されています。周囲には回路図のような装飾的な要素が見られます。\n*   **\n60003\t60\t\tこの画像は、動画制作のワークフローにおける「企画・サムネ作成」と「台本」の段階を説明しているプレゼンテーションスライドです。技術的な解説動画、特にAI関連のツールの紹介に関する内容であると推測されます。\n\nここでは、**コードは直接表示されていません**が、動画制作の計画と台本作成に関する詳細なプロセスが説明されています。\n\n---\n\n### 画面全体の構成\n\n画面は大きく分けて、左側の「企画・サ\n",
+  "stderr": "",
+  "execution_time_ms": 1548
+}

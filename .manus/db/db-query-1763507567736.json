@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, userId, theme, status, currentStep, progress FROM videoGenerationJobs ORDER BY id DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, userId, theme, status, currentStep, progress FROM videoGenerationJobs ORDER BY id DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "90002",
+      "userId": "1",
+      "theme": "SEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由",
+      "status": "processing",
+      "currentStep": "2",
+      "progress": "15"
+    },
+    {
+      "id": "90001",
+      "userId": "1",
+      "theme": "YouTube動画の作り方",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80"
+    },
+    {
+      "id": "60030",
+      "userId": "1",
+      "theme": "スキーマ修正後の完全テスト",
+      "status": "completed",
+      "currentStep": "9",
+      "progress": "100"
+    },
+    {
+      "id": "60029",
+      "userId": "1",
+      "theme": "完全動作確認",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80"
+    },
+    {
+      "id": "60028",
+      "userId": "1",
+      "theme": "最終修正テスト",
+      "status": "failed",
+      "currentStep": "8",
+      "progress": "80"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttheme\tstatus\tcurrentStep\tprogress\n90002\t1\tSEOやSNSマーケで稼げない人は、ステップメールを学ぶべき理由\tprocessing\t2\t15\n90001\t1\tYouTube動画の作り方\tfailed\t8\t80\n60030\t1\tスキーマ修正後の完全テスト\tcompleted\t9\t100\n60029\t1\t完全動作確認\tfailed\t8\t80\n60028\t1\t最終修正テスト\tfailed\t8\t80\n",
+  "stderr": "",
+  "execution_time_ms": 1558
+}

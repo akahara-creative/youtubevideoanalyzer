@@ -1,0 +1,50 @@
+{
+  "query": "SELECT * FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 2",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT * FROM videoGenerationJobs ORDER BY createdAt DESC LIMIT 2",
+  "rows": [
+    {
+      "id": "2",
+      "userId": "1",
+      "theme": "ステップメールの書き方",
+      "status": "failed",
+      "currentStep": "1",
+      "progress": "5",
+      "estimatedTimeRemaining": "600",
+      "benchmarkAnalysisId": "NULL",
+      "strategyId": "NULL",
+      "scenarioId": "NULL",
+      "slideDesignId": "NULL",
+      "projectId": "NULL",
+      "errorMessage": "The requested module './videoProcessor' does not provide an export named 'processVideo'",
+      "errorDetails": "{\"error\":\"/home/ubuntu/youtube-video-analyzer/server/benchmarkAnalyzer.ts:9\\nimport { processVideo } from \\\"./videoProcessor\\\";\\n         ^\\n\\nSyntaxError: The requested module './videoProcessor' does not provide an export named 'processVideo'\\n    at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)\\n    at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)\\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)\\n    at async executeStep1 (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:230:37)\\n    at async processJob (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:144:5)\\n    at async Timeout._onTimeout (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:98:9)\",\"timestamp\":\"2025-11-17T10:48:58.852Z\"}",
+      "retryCount": "3",
+      "createdAt": "2025-11-17 10:48:42",
+      "updatedAt": "2025-11-17 10:48:59",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "1",
+      "userId": "1",
+      "theme": "SEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由",
+      "status": "failed",
+      "currentStep": "1",
+      "progress": "5",
+      "estimatedTimeRemaining": "600",
+      "benchmarkAnalysisId": "NULL",
+      "strategyId": "NULL",
+      "scenarioId": "NULL",
+      "slideDesignId": "NULL",
+      "projectId": "NULL",
+      "errorMessage": "The requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'",
+      "errorDetails": "{\"error\":\"/home/ubuntu/youtube-video-analyzer/server/benchmarkAnalyzer.ts:10\\nimport { addDocumentToRAG } from \\\"./ragWithTags\\\";\\n         ^\\n\\nSyntaxError: The requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'\\n    at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)\\n    at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)\\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)\\n    at async executeStep1 (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:230:37)\\n    at async processJob (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:144:5)\\n    at async Timeout._onTimeout (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:98:9)\",\"timestamp\":\"2025-11-17T10:43:10.315Z\"}",
+      "retryCount": "3",
+      "createdAt": "2025-11-17 10:42:52",
+      "updatedAt": "2025-11-17 10:43:10",
+      "completedAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\ttheme\tstatus\tcurrentStep\tprogress\testimatedTimeRemaining\tbenchmarkAnalysisId\tstrategyId\tscenarioId\tslideDesignId\tprojectId\terrorMessage\terrorDetails\tretryCount\tcreatedAt\tupdatedAt\tcompletedAt\n2\t1\tステップメールの書き方\tfailed\t1\t5\t600\tNULL\tNULL\tNULL\tNULL\tNULL\tThe requested module './videoProcessor' does not provide an export named 'processVideo'\t{\"error\":\"/home/ubuntu/youtube-video-analyzer/server/benchmarkAnalyzer.ts:9\\nimport { processVideo } from \\\"./videoProcessor\\\";\\n         ^\\n\\nSyntaxError: The requested module './videoProcessor' does not provide an export named 'processVideo'\\n    at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)\\n    at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)\\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)\\n    at async executeStep1 (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:230:37)\\n    at async processJob (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:144:5)\\n    at async Timeout._onTimeout (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:98:9)\",\"timestamp\":\"2025-11-17T10:48:58.852Z\"}\t3\t2025-11-17 10:48:42\t2025-11-17 10:48:59\tNULL\n1\t1\tSEOとかバズ、プレゼント企画、SNSマーケという人は全員ステップメールを書くべき理由\tfailed\t1\t5\t600\tNULL\tNULL\tNULL\tNULL\tNULL\tThe requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'\t{\"error\":\"/home/ubuntu/youtube-video-analyzer/server/benchmarkAnalyzer.ts:10\\nimport { addDocumentToRAG } from \\\"./ragWithTags\\\";\\n         ^\\n\\nSyntaxError: The requested module './ragWithTags' does not provide an export named 'addDocumentToRAG'\\n    at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)\\n    at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)\\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)\\n    at async executeStep1 (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:230:37)\\n    at async processJob (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:144:5)\\n    at async Timeout._onTimeout (/home/ubuntu/youtube-video-analyzer/server/videoGenerationWorker.ts:98:9)\",\"timestamp\":\"2025-11-17T10:43:10.315Z\"}\t3\t2025-11-17 10:42:52\t2025-11-17 10:43:10\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1584
+}

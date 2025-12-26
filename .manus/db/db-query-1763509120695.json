@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, status, currentStep, progress, errorMessage, updatedAt FROM videoGenerationJobs WHERE id = 90002",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user ENKfpgkx2S962Xx.root --database NYSDZ3CUp62WRWmJyXH7Fz --execute SELECT id, status, currentStep, progress, errorMessage, updatedAt FROM videoGenerationJobs WHERE id = 90002",
+  "rows": [
+    {
+      "id": "90002",
+      "status": "completed",
+      "currentStep": "9",
+      "progress": "100",
+      "errorMessage": "NULL",
+      "updatedAt": "2025-11-18 23:38:05"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tstatus\tcurrentStep\tprogress\terrorMessage\tupdatedAt\n90002\tcompleted\t9\t100\tNULL\t2025-11-18 23:38:05\n",
+  "stderr": "",
+  "execution_time_ms": 1614
+}
