@@ -743,7 +743,8 @@ H3見出し数: ${seoCriteria.targetH3Count}個以上
 【構成作成のルール】
 1. **重要: H2見出しを必ず使用すること。** 記事の大きな区切りは必ずH2（##）とし、その中の小見出しとしてH3（###）を使用する階層構造にすること。H2なしでH3だけを並べるのは禁止。
     - **注意: 見出しに「H2-1」「H3-1」のような管理番号やIDは絶対に含めないこと。** 純粋なタイトルのみにすること。
-2. H2見出しが足りない場合は、「具体的な事例」「失敗エピソード」「Q&A」「用語解説」「ステップバイステップの手順」などのセクションを追加して、必ず${seoCriteria.targetH2Count}個以上にすること。
+2. **記事タイトル**: テーマをそのまま使うのではなく、SEOキーワードを含み、かつ読者がクリックしたくなる魅力的なタイトル（32文字前後推奨）を作成すること。
+3. H2見出しが足りない場合は、「具体的な事例」「失敗エピソード」「Q&A」「用語解説」「ステップバイステップの手順」などのセクションを追加して、必ず${seoCriteria.targetH2Count}個以上にすること。
 2. 各セクションでどのキーワードを何回使うか、どの程度のエピソードを入れるかを計画すること。
 3. 結論キーワード（${safeConclusion.join(', ')}）は、最後のまとめやオファーへの誘導でのみ使用し、ノウハウとしては語らないこと。
 ${remarks ? `4. 備考欄の指示（${remarks}）がある場合は、それを最優先で反映すること。` : ''}
@@ -983,11 +984,15 @@ ${keywordInstructions}
 1. **文字数上限**: このセクションは**最大${Math.ceil(targetSectionLength * 1.2)}文字**以内で執筆してください。
 ${lengthInstruction}
    - 指定文字数を大幅に超えることは「プロ失格」とみなします。
-2. 文体: 「${authorName}スタイル」を厳守（一人称「僕」、語りかける口調）。
+2. 文体: 「${authorName}スタイル」を厳守。**原則として「〜です・〜ます」調で統一すること（「〜だ・〜である」は禁止）。**一人称は「僕」。
 3. 前後の繋がり: 前のセクションからの流れを意識し、唐突な書き出しにしないこと。
 ${isFirstSection ? '4. 冒頭: 記事の導入として、読者の心をつかむ書き出しにすること。' : '4. **重要: 挨拶（「こんにちは、赤原です」等）は絶対に禁止。** 前のセクションから自然に続くように書くこと。'}
 5. 構成遵守: 指定された見出し（H2/H3）とキーワードを必ず使用すること。
 6. 見出しのフォーマット: Markdown形式（##, ###）で出力すること。
+7. **読者への直接の呼びかけ禁止**: 「あなた」という言葉は絶対に使用しないこと。読者に直接語りかけるのではなく、あくまで「筆者の体験談・苦労話」として語ること（RAGドキュメント#5準拠）。
+   - NG: 「動画編集で稼げないのは、あなたのせいじゃない」
+   - OK: 「動画編集で稼げないのは、僕のせいじゃなかった」
+8. **スペース繋ぎ言葉の禁止**: 「SEO 稼げない」「動画編集 副業」のような検索キーワード的な書き方は禁止。必ず助詞を使って文章にする（「SEOでは稼げない」「動画編集は副業に向いている」）。
 
 【${authorName}スタイルの詳細ルール】
 1. 具体的な数字を使う（何時間働いたか、何日間かかったか、いくら使ったか）
@@ -1054,6 +1059,47 @@ ${!isFirstSection ? `
     console.log(`[generateSEOArticle] Section ${i + 1} start: ${content.substring(0, 100).replace(/\n/g, ' ')}...`);
 
     article += content + "\n\n";
+  }
+
+  // 途切れチェックと補完
+  let trimmedArticle = article.trim();
+  // 不要な終了タグがあれば削除
+  if (trimmedArticle.endsWith('</article>')) {
+    article = article.replace('</article>', '');
+    trimmedArticle = article.trim();
+  }
+
+  const lastChar = trimmedArticle.slice(-1);
+  const validEndings = ['。', '！', '？', '!', '?', '>', '}', ']', ')', '\n'];
+  
+  if (!validEndings.includes(lastChar) && !trimmedArticle.endsWith('```')) {
+    console.warn('[generateSEOArticle] Article appears truncated. Attempting to complete...');
+    try {
+      const completionResponse = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `あなたは${authorName}です。執筆中の記事が途中で切れてしまいました。
+文脈を読み取り、自然な形で文章を完結させてください。
+必ず「〜です・〜ます」調で書いてください。`
+          },
+          {
+            role: "user",
+            content: `以下の文章の続きを書いて、記事を完結させてください：
+\n${trimmedArticle.slice(-2000)}`
+          }
+        ],
+        max_tokens: 1024
+      });
+      
+      const completion = completionResponse.choices[0].message.content;
+      if (typeof completion === 'string' && completion) {
+        console.log('[generateSEOArticle] Completion added:', completion.substring(0, 50) + '...');
+        article += completion + "\n\n";
+      }
+    } catch (e) {
+      console.error('[generateSEOArticle] Failed to complete truncated article:', e);
+    }
   }
   
   // RAGプロット表記を完全削除
@@ -1361,8 +1407,15 @@ export async function refineArticleWithPersonas(
 
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
-      const sectionText = `${section.title}\n${section.content}`;
+      const sectionText = section.title ? `${section.title}\n${section.content}` : section.content;
       console.log(`[refineArticleWithPersonas] Refining section ${i + 1}/${sections.length}...`);
+
+      // 優先キーワード（出現回数が多い上位5つ）を抽出
+      const priorityKeywords = seoCriteria.targetKeywords
+        .sort((a, b) => b.minCount - a.minCount)
+        .slice(0, 5)
+        .map(k => k.keyword)
+        .join(', ');
 
       // 1. 構成作家によるチェック（セクション単位）
       const editorCheckPrompt = `
@@ -1374,12 +1427,17 @@ ${personas.editor.tone}
 チェックポイント:
 ${personas.editor.checkPoints.map(p => `- ${p}`).join('\n')}
 
+【優先SEOキーワード（削除禁止）】
+${priorityKeywords}
+※これらのキーワードが多用されていても「詰め込み」とは判定しないでください。SEOに必要なためです。
+
 【チェック対象セクション】
 ${sectionText}
 
 【指示】
-このセクションの中に、日本語として不自然な点、助詞の誤り、キーワードの不自然な詰め込み（例：「動画編集 副業」のようなスペース繋ぎ）、論理の飛躍、読者への共感不足などがあれば、具体的に指摘してください。
-特に「スペース繋ぎのキーワード」は厳しく指摘してください。
+このセクションの中に、日本語として不自然な点、助詞の誤り、論理の飛躍、読者への共感不足などがあれば、具体的に指摘してください。
+「スペース繋ぎのキーワード」（例：「動画編集 副業」）は厳しく指摘してください。
+ただし、上記の【優先SEOキーワード】に関しては、回数が多くても指摘しないでください。
 
 修正が必要な箇所と、その理由をリストアップしてください。
 修正が不要な場合は「修正なし」と答えてください。
@@ -1402,24 +1460,26 @@ ${sectionText}
       const writerFixPrompt = `
 あなたは「${personas.writer.name}」です。
 構成作家から以下の指摘を受けました。
-指摘内容を真摯に受け止め、あなたの文体（${personas.writer.style}）でこのセクションを修正してください。
 
-【構成作家からの指摘】
+【指摘内容】
 ${checkResult}
 
-【あなたの特徴】
-性格・トーン: ${personas.writer.tone}
-哲学: ${personas.writer.philosophy}
+【優先SEOキーワード（必ず含めること）】
+${priorityKeywords}
 
-【修正ルール】
-1. 指摘された箇所を重点的に修正してください。
-2. 「スペース繋ぎキーワード」は必ず助詞を補って自然な日本語に直してください。
-3. 修正しても、SEOキーワードは極力維持してください。
-4. **重要: セクションの要約ではなく、修正後のセクション全文（見出し含む）を必ず出力してください。**
-5. **重要: 元の長さを維持してください。短くすることは禁止です。**
+【修正対象セクション本文】
+${section.content}
 
-【修正対象セクション】
-${sectionText}
+【指示】
+指摘内容を踏まえて、このセクションの**本文のみ**を修正してください。
+見出し（## ...）は出力しないでください。
+
+${personas.writer.style}
+
+【重要】
+1. **優先SEOキーワード（${priorityKeywords}）は、修正後の文章にも必ず含めてください。** 自然な文脈で織り交ぜてください。
+2. その他のSEOキーワードも極力維持してください。
+3. 修正後の**本文のみ**を出力してください。
 `;
 
       const fixResponse = await invokeLLM({
@@ -1428,9 +1488,24 @@ ${sectionText}
 
       const fixedContent = typeof fixResponse.choices[0].message.content === 'string'
         ? fixResponse.choices[0].message.content
-        : sectionText;
+        : "";
         
-      refinedArticle += fixedContent + "\n\n";
+      if (!fixedContent) {
+        console.error('[refineArticleWithPersonas] Failed to generate fixed article for section. Reverting to original section.');
+        refinedArticle += sectionText + "\n\n";
+        continue;
+      }
+
+      // 安全装置: 修正後の文章が極端に短い（元の50%未満）場合は、途切れとみなして元に戻す
+      if (fixedContent.length < section.content.length * 0.5) {
+        console.warn(`[refineArticleWithPersonas] Fixed content for section is too short (${fixedContent.length} chars vs ${section.content.length} chars). Discarding fix to prevent truncation.`);
+        refinedArticle += sectionText + "\n\n";
+        continue;
+      }
+        
+      // 見出しを再構築して追加
+      const header = section.title ? `${section.title}\n` : '';
+      refinedArticle += header + fixedContent + "\n\n";
     }
     
     return refinedArticle;
@@ -1574,16 +1649,18 @@ function parseStructure(md: string) {
   for (const line of lines) {
     const match = line.match(h2Regex);
     if (match) {
-      if (currentTitle) {
+      // Push previous section (Intro or H2)
+      if (currentContent.length > 0 || currentTitle) {
         sections.push({ title: currentTitle, content: currentContent.join('\n') });
       }
-      currentTitle = line.trim(); // Use the full line as title, or match[1] if we want just text
+      currentTitle = line.trim();
       currentContent = [];
-    } else if (currentTitle) {
+    } else {
       currentContent.push(line);
     }
   }
-  if (currentTitle) {
+  // Push last section
+  if (currentContent.length > 0 || currentTitle) {
     sections.push({ title: currentTitle, content: currentContent.join('\n') });
   }
   return sections;

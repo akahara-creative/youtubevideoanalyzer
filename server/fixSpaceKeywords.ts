@@ -35,20 +35,34 @@ async function processBySections(article: string, processFn: (section: string) =
       continue;
     }
     
-    // セクションがまだ長すぎる場合（8000文字以上）は、さらに分割して処理
-    if (section.length > 8000) {
+    // セクションがまだ長すぎる場合（2000文字以上）は、さらに分割して処理
+    if (section.length > 2000) {
        console.log('[processBySections] セクションが長すぎるため、さらに分割して処理します');
        const subChunks = [];
-       const chunkSize = 4000;
+       const chunkSize = 2000;
        for (let i = 0; i < section.length; i += chunkSize) {
          subChunks.push(section.substring(i, i + chunkSize));
        }
        
        for (const chunk of subChunks) {
-         processedSections.push(await processFn(chunk));
+         const processed = await processFn(chunk);
+         // 安全装置: 処理後の文字列が極端に短い（元の50%未満）場合は、処理失敗とみなして元に戻す
+         if (processed.length < chunk.length * 0.5) {
+            console.warn(`[processBySections] Processed chunk is too short (${processed.length} vs ${chunk.length}). Reverting to original.`);
+            processedSections.push(chunk);
+         } else {
+            processedSections.push(processed);
+         }
        }
     } else {
-       processedSections.push(await processFn(section));
+       const processed = await processFn(section);
+       // 安全装置
+       if (processed.length < section.length * 0.5) {
+          console.warn(`[processBySections] Processed section is too short (${processed.length} vs ${section.length}). Reverting to original.`);
+          processedSections.push(section);
+       } else {
+          processedSections.push(processed);
+       }
     }
   }
   

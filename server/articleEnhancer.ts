@@ -1,36 +1,5 @@
 import { invokeLLM } from "./_core/llm";
-
-/**
- * 「」付きスペースキーワードを自然な日本語に修正
- */
-export async function fixSpaceKeywords(article: string): Promise<string> {
-  const prompt = `
-以下の記事に含まれる「」付きのスペース繋ぎキーワードを、自然な日本語に修正してください。
-
-例:
-- 「SEO 稼げない」 → 「SEOで稼げない」
-- 「見込み客 教育 仕組み」 → 「見込み客を教育する仕組み」
-- 「集客 安定しない」 → 「集客が安定しない」
-
-【重要なルール】
-1. 「」の中のスペース繋ぎキーワードのみを修正する
-2. 「」の外のテキストは一切変更しない
-3. 記事の内容、構成、順序は絶対に変更しない
-4. 修正後の記事全文をそのまま出力する
-
-記事:
-${article}
-`;
-
-  const response = await invokeLLM({
-    messages: [
-      { role: "system", content: "あなたは日本語の文章校正の専門家です。" },
-      { role: "user", content: prompt }
-    ]
-  });
-
-  return response.choices[0].message.content || article;
-}
+import { fixSpaceKeywords } from "./fixSpaceKeywords";
 
 /**
  * AIO要約セクションを生成
@@ -104,7 +73,8 @@ ${article}
     ]
   });
 
-  return response.choices[0].message.content || "";
+  const content = response.choices[0].message.content;
+  return typeof content === 'string' ? content : "";
 }
 
 /**
@@ -151,7 +121,8 @@ A: <<回答2>>
     ]
   });
 
-  return response.choices[0].message.content || "";
+  const content = response.choices[0].message.content;
+  return typeof content === 'string' ? content : "";
 }
 
 /**
@@ -272,7 +243,8 @@ ${article}
     }
   });
 
-  const faqSchema = faqResponse.choices[0].message.content || "{}";
+  const content = faqResponse.choices[0].message.content;
+  const faqSchema = typeof content === 'string' ? content : "{}";
 
   return {
     article: JSON.stringify(articleSchema, null, 2),
@@ -345,7 +317,8 @@ ${article.substring(0, 1000)}...
     }
   });
 
-  const metaInfo = JSON.parse(response.choices[0].message.content || "{}");
+  const metaContent = response.choices[0].message.content;
+  const metaInfo = JSON.parse(typeof metaContent === 'string' ? metaContent : "{}");
   return metaInfo;
 }
 

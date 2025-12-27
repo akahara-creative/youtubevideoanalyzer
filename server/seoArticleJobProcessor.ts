@@ -285,6 +285,7 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     // Refine with personas first
     const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
     const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria);
+    // const refinedArticle = article; // Skip refinement to prevent truncation
     
     // Update article if refined
     if (refinedArticle !== article) {
