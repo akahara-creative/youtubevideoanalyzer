@@ -162,61 +162,116 @@ export async function invokeOllama(params: InvokeParams): Promise<InvokeResult> 
     options: {
       num_predict: maxTokens || max_tokens || 4096,
       temperature: 0.7,
+      num_ctx: parseInt(process.env.OLLAMA_NUM_CTX || "2048", 10),
     },
-    stream: false,
+    stream: true,
   };
 
   if (response_format?.type === "json_schema" || response_format?.type === "json_object") {
     requestBody.format = "json";
+    // For JSON mode, we still use streaming to avoid timeouts
+    requestBody.stream = true; 
   }
 
-  const response = await fetch(`${OLLAMA_HOST}/api/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  });
+  const timeoutMs = parseInt(process.env.OLLAMA_TIMEOUT || "300000", 10);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Ollama API error: ${response.status} ${response.statusText} – ${errorText}`
-    );
-  }
-
-  const data = await response.json();
-  
-  let content = data.message.content || "";
-  
-  // JSON形式が要求されている場合、Markdownコードブロックを削除
-  if (response_format?.type === "json_schema" || response_format?.type === "json_object") {
-    content = content.replace(/^```json\s*/, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
-  }
-
-  // OllamaのレスポンスをInvokeResult形式に変換
-  return {
-    id: `ollama-${Date.now()}`,
-    created: Math.floor(Date.now() / 1000),
-    model,
-    choices: [
-      {
-        index: 0,
-        message: {
-          role: data.message.role || "assistant",
-          content,
-        },
-        finish_reason: data.done ? "stop" : null,
+  try {
+    const response = await fetch(`${OLLAMA_HOST}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ],
-    usage: data.eval_count
-      ? {
-          prompt_tokens: data.prompt_eval_count || 0,
-          completion_tokens: data.eval_count || 0,
-          total_tokens: (data.prompt_eval_count || 0) + (data.eval_count || 0),
+      body: JSON.stringify(requestBody),
+      signal: controller.signal,
+    });
+    
+    // We don't clear timeout here because we need to wait for the stream to finish
+    // But we should clear it if we get headers? No, we want total timeout.
+
+    if (!response.ok) {
+      clearTimeout(timeoutId);
+      const errorText = await response.text();
+      throw new Error(
+        `Ollama API error: ${response.status} ${response.statusText} – ${errorText}`
+      );
+    }
+
+    if (!response.body) {
+      clearTimeout(timeoutId);
+      throw new Error("Ollama response body is empty");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let content = "";
+    let done = false;
+    let finalData: any = null;
+
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      if (readerDone) {
+        done = true;
+        break;
+      }
+      
+      const chunk = decoder.decode(value, { stream: true });
+      // Ollama sends multiple JSON objects in one chunk sometimes
+      const lines = chunk.split('\n').filter(line => line.trim() !== '');
+      
+      for (const line of lines) {
+        try {
+          const json = JSON.parse(line);
+          if (json.message && json.message.content) {
+            content += json.message.content;
+          }
+          if (json.done) {
+            finalData = json;
+          }
+        } catch (e) {
+          console.warn("[Ollama] Failed to parse chunk:", line);
         }
-      : undefined,
-  };
+      }
+    }
+    
+    clearTimeout(timeoutId);
+    
+    // JSON形式が要求されている場合、Markdownコードブロックを削除
+    if (response_format?.type === "json_schema" || response_format?.type === "json_object") {
+      content = content.replace(/^```json\s*/, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
+    }
+
+    // OllamaのレスポンスをInvokeResult形式に変換
+    return {
+      id: `ollama-${Date.now()}`,
+      created: Math.floor(Date.now() / 1000),
+      model,
+      choices: [
+        {
+          index: 0,
+          message: {
+            role: "assistant",
+            content,
+          },
+          finish_reason: "stop",
+        },
+      ],
+      usage: finalData?.eval_count
+        ? {
+            prompt_tokens: finalData.prompt_eval_count || 0,
+            completion_tokens: finalData.eval_count || 0,
+            total_tokens: (finalData.prompt_eval_count || 0) + (finalData.eval_count || 0),
+          }
+        : undefined,
+    };
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Ollama request timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  }
 }
 
 /**
