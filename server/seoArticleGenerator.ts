@@ -1299,33 +1299,34 @@ export async function refineArticleWithPersonas(
 ): Promise<string> {
   console.log('[refineArticleWithPersonas] Starting persona-based refinement...');
 
-  // 記事が長すぎる場合（10000文字以上）は、セクションごとに分割してリライト（トークン制限回避）
-  if (article.length > 10000) {
-    console.log(`[refineArticleWithPersonas] Article is long (${article.length} chars). Switching to Chunked Refinement.`);
+  console.log(`[refineArticleWithPersonas] Switching to Chunked Refinement for stability.`);
     
-    const sections = parseStructure(article);
-    let refinedArticle = "";
-    
-    // タイトル（H1）があれば最初に追加（リライト対象外）
-    const titleMatch = article.match(/^#\s+(.+)$/m);
-    if (titleMatch) {
-      refinedArticle += `# ${titleMatch[1]}\n\n`;
-    }
+  const sections = parseStructure(article);
+  let refinedArticle = "";
+  
+  // タイトル（H1）があれば最初に追加（リライト対象外）
+  const titleMatch = article.match(/^#\s+(.+)$/m);
+  if (titleMatch) {
+    refinedArticle += `# ${titleMatch[1]}\n\n`;
+  }
 
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      const sectionText = section.title ? `${section.title}\n${section.content}` : section.content;
-      console.log(`[refineArticleWithPersonas] Refining section ${i + 1}/${sections.length}...`);
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
+    // Skip empty sections
+    if (!section.title && !section.content.trim()) continue;
 
-      // 優先キーワード（出現回数が多い上位5つ）を抽出
-      const priorityKeywords = seoCriteria.targetKeywords
-        .sort((a, b) => b.minCount - a.minCount)
-        .slice(0, 5)
-        .map(k => k.keyword)
-        .join(', ');
+    const sectionText = section.title ? `${section.title}\n${section.content}` : section.content;
+    console.log(`[refineArticleWithPersonas] Refining section ${i + 1}/${sections.length}...`);
 
-      // 1. 構成作家によるチェック（セクション単位）
-      const editorCheckPrompt = `
+    // 優先キーワード（出現回数が多い上位5つ）を抽出
+    const priorityKeywords = seoCriteria.targetKeywords
+      .sort((a, b) => b.minCount - a.minCount)
+      .slice(0, 5)
+      .map(k => k.keyword)
+      .join(', ');
+
+    // 1. 構成作家によるチェック（セクション単位）
+    const editorCheckPrompt = `
 あなたは「${personas.editor.role}」です。
 以下の記事セクションを、あなたの性格・視点で厳格にチェックしてください。
 
@@ -1350,21 +1351,21 @@ ${sectionText}
 修正が不要な場合は「修正なし」と答えてください。
 `;
 
-      const checkResponse = await invokeLLM({
-        messages: [{ role: "user", content: editorCheckPrompt }]
-      });
-      
-      const checkResult = typeof checkResponse.choices[0].message.content === 'string' 
-        ? checkResponse.choices[0].message.content 
-        : "";
+    const checkResponse = await invokeLLM({
+      messages: [{ role: "user", content: editorCheckPrompt }]
+    });
+    
+    const checkResult = typeof checkResponse.choices[0].message.content === 'string' 
+      ? checkResponse.choices[0].message.content 
+      : "";
 
-      if (checkResult.includes("修正なし")) {
-        refinedArticle += sectionText + "\n\n";
-        continue;
-      }
+    if (checkResult.includes("修正なし")) {
+      refinedArticle += sectionText + "\n\n";
+      continue;
+    }
 
-      // 2. 赤原による修正（セクション単位）
-      const writerFixPrompt = `
+    // 2. 赤原による修正（セクション単位）
+    const writerFixPrompt = `
 あなたは「${personas.writer.name}」です。
 構成作家から以下の指摘を受けました。
 
@@ -1389,160 +1390,31 @@ ${personas.writer.style}
 3. 修正後の**本文のみ**を出力してください。
 `;
 
-      const fixResponse = await invokeLLM({
-        messages: [{ role: "user", content: writerFixPrompt }]
-      });
+    const fixResponse = await invokeLLM({
+      messages: [{ role: "user", content: writerFixPrompt }]
+    });
 
-      const fixedContent = typeof fixResponse.choices[0].message.content === 'string'
-        ? fixResponse.choices[0].message.content
-        : "";
-        
-      if (!fixedContent) {
-        console.error('[refineArticleWithPersonas] Failed to generate fixed article for section. Reverting to original section.');
-        refinedArticle += sectionText + "\n\n";
-        continue;
-      }
-
-      // 安全装置: 修正後の文章が極端に短い（元の50%未満）場合は、途切れとみなして元に戻す
-      if (fixedContent.length < section.content.length * 0.5) {
-        console.warn(`[refineArticleWithPersonas] Fixed content for section is too short (${fixedContent.length} chars vs ${section.content.length} chars). Discarding fix to prevent truncation.`);
-        refinedArticle += sectionText + "\n\n";
-        continue;
-      }
-        
-      // 見出しを再構築して追加
-      const header = section.title ? `${section.title}\n` : '';
-      refinedArticle += header + fixedContent + "\n\n";
+    const fixedContent = typeof fixResponse.choices[0].message.content === 'string'
+      ? fixResponse.choices[0].message.content
+      : "";
+      
+    if (!fixedContent) {
+      console.error('[refineArticleWithPersonas] Failed to generate fixed article for section. Reverting to original section.');
+      refinedArticle += sectionText + "\n\n";
+      continue;
     }
-    
-    return refinedArticle;
+
+    // 安全装置: 修正後の文章が極端に短い（元の50%未満）場合は、途切れとみなして元に戻す
+    if (fixedContent.length < section.content.length * 0.5) {
+      console.warn(`[refineArticleWithPersonas] Fixed content for section is too short (${fixedContent.length} chars vs ${section.content.length} chars). Discarding fix to prevent truncation.`);
+      refinedArticle += sectionText + "\n\n";
+    } else {
+      // 見出しを復元して追加
+      refinedArticle += section.title ? `${section.title}\n${fixedContent}\n\n` : `${fixedContent}\n\n`;
+    }
   }
 
-  // 短い記事（10000文字未満）は一括リライト
-  console.log('[refineArticleWithPersonas] 1. Editor check (Full Article)...');
-  const editorCheckPrompt = `
-あなたは「${personas.editor.role}」です。
-以下の記事を、あなたの性格・視点で厳格にチェックしてください。
-
-【あなたの特徴】
-${personas.editor.tone}
-チェックポイント:
-${personas.editor.checkPoints.map(p => `- ${p}`).join('\n')}
-
-【チェック対象記事】
-${article}
-
-【指示】
-記事の中に、日本語として不自然な点、助詞の誤り、キーワードの不自然な詰め込み（例：「動画編集 副業」のようなスペース繋ぎ）、論理の飛躍、読者への共感不足などがあれば、具体的に指摘してください。
-特に「スペース繋ぎのキーワード」は厳しく指摘してください。
-
-また、以下の点も確認してください：
-1. **見出しの数**: H2見出し、H3見出しが極端に少なくないか（構成案通りか）。
-2. **キーワードのバランス**: 特定のキーワード（例：メインテーマ）だけが過剰に繰り返され、他の関連キーワードが無視されていないか。
-
-修正が必要な箇所と、その理由をリストアップしてください。
-修正が不要な場合は「修正なし」と答えてください。
-`;
-
-  const checkResponse = await invokeLLM({
-    messages: [{ role: "user", content: editorCheckPrompt }]
-  });
-  
-  const checkResult = typeof checkResponse.choices[0].message.content === 'string' 
-    ? checkResponse.choices[0].message.content 
-    : "";
-  console.log('[refineArticleWithPersonas] Editor feedback:', checkResult.substring(0, 200) + "...");
-
-  if (checkResult.includes("修正なし")) {
-    console.log('[refineArticleWithPersonas] No issues found by editor.');
-    return article;
-  }
-
-
-
-  // 2. 赤原による修正
-  console.log('[refineArticleWithPersonas] 2. Writer fix...');
-  const writerFixPrompt = `
-あなたは「${personas.writer.name}」です。
-構成作家から以下の指摘を受けました。
-指摘内容を真摯に受け止め、あなたの文体（${personas.writer.style}）で記事を修正してください。
-
-【構成作家からの指摘】
-${checkResult}
-
-【あなたの特徴】
-性格・トーン: ${personas.writer.tone}
-哲学: ${personas.writer.philosophy}
-
-【修正ルール】
-1. 指摘された箇所を重点的に修正してください。
-2. 「スペース繋ぎキーワード」は必ず助詞を補って自然な日本語に直してください。
-3. 修正しても、SEOキーワード（${seoCriteria.targetKeywords.map(k => k.keyword).join(', ')}）は極力維持してください。ただし、自然さを優先してください。
-4. **重要: 記事の要約ではなく、修正後の記事全文を必ず出力してください。元記事の長さを維持してください。**
-5. **重要: 見出し（H2, H3）が不足していると指摘された場合は、構成を復元して追記してください。**
-6. **重要: キーワードのバランスが悪いと指摘された場合は、不足しているキーワードを自然な形で文章に盛り込んでください。**
-
-【元記事】
-${article}
-`;
-
-  const fixResponse = await invokeLLM({
-    messages: [{ role: "user", content: writerFixPrompt }],
-    max_tokens: 16384 // Ensure full article output
-  });
-
-  const fixedArticle = typeof fixResponse.choices[0].message.content === 'string'
-    ? fixResponse.choices[0].message.content
-    : "";
-    
-  if (!fixedArticle) {
-    console.error('[refineArticleWithPersonas] Failed to generate fixed article');
-    return article;
-  }
-
-  // Check if the fixed article is too short (likely a summary or error)
-  if (fixedArticle.length < article.length * 0.5) {
-    console.warn(`[refineArticleWithPersonas] Fixed article is too short (${fixedArticle.length} chars vs ${article.length} chars). Discarding fix.`);
-    return article;
-  }
-  
-  // Strip any conversational wrapper text if present (simple heuristic)
-  // Ideally LLM returns just the article, but sometimes it adds "Here is the fixed article..."
-  // For now, we assume the prompt "修正後の記事全文を出力してください" works well enough, 
-  // or we can try to extract markdown.
-  
-  console.log('[refineArticleWithPersonas] Article fixed by writer.');
-
-  // 3. 構成作家による再確認（オプションだが、今回は修正版をそのまま採用するか、簡易チェックするか）
-  // ユーザー要件: "修正後の内容を、「チェック担当：構成作家」としての擬似人格が確認"
-  // ここでは確認ログを出す程度にするか、さらにループさせるか。
-  // 無限ループを防ぐため、1回のリファインで終了とします。
-  
-  console.log('[refineArticleWithPersonas] 3. Editor verification...');
-  const verifyPrompt = `
-あなたは「${personas.editor.role}」です。
-ライターが指摘を受けて記事を修正しました。
-修正後の記事を確認し、合格かどうか判定してください。
-
-【修正後の記事】
-${fixedArticle}
-
-【判定】
-合格なら「合格」、不合格なら「不合格」と理由を述べてください。
-`;
-
-  const verifyResponse = await invokeLLM({
-    messages: [{ role: "user", content: verifyPrompt }]
-  });
-  
-  const verifyResult = typeof verifyResponse.choices[0].message.content === 'string'
-    ? verifyResponse.choices[0].message.content
-    : "";
-  console.log('[refineArticleWithPersonas] Verification result:', verifyResult);
-
-  // Even if verification fails, we return the fixed article as it's likely better than the original
-  // or at least attempted to address issues.
-  return fixedArticle;
+  return refinedArticle;
 }
 
 function parseStructure(md: string) {

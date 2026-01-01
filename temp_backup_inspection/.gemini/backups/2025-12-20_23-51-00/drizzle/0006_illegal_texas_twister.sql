@@ -1,0 +1,1 @@
+ALTER TABLE `contentImports` MODIFY COLUMN `fileType` enum('txt','docx','pdf','m4a') NOT NULL;

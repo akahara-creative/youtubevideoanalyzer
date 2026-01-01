@@ -2331,12 +2331,7 @@ ${ragContext}`
         await db
           .update(ragDocuments)
           .set({ content: input.content })
-          .where(
-            and(
-              eq(ragDocuments.id, input.documentId),
-              eq(ragDocuments.userId, ctx.user.id)
-            )
-          );
+          .where(eq(ragDocuments.id, input.documentId));
 
         // Delete existing tags
         await db.delete(ragDocumentTags).where(eq(ragDocumentTags.documentId, input.documentId));
@@ -2411,6 +2406,21 @@ ${ragContext}`
           .set({ pickedUp: input.pickedUp })
           .where(eq(ragDocuments.id, input.documentId));
 
+        return { success: true };
+      }),
+
+    bulkDeleteDocuments: protectedProcedure
+      .input(z.object({ documentIds: z.array(z.number()) }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+        if (input.documentIds.length > 0) {
+          // Delete tags first
+          await db.delete(ragDocumentTags).where(inArray(ragDocumentTags.documentId, input.documentIds));
+          // Delete documents
+          await db.delete(ragDocuments).where(inArray(ragDocuments.id, input.documentIds));
+        }
         return { success: true };
       }),
 

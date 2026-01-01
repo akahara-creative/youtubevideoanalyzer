@@ -4,6 +4,7 @@
  */
 
 import type { InvokeParams, InvokeResult, Message, Role } from "./llm";
+import { fetch, Agent } from "undici";
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST || process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.1:8b";
@@ -185,6 +186,11 @@ export async function invokeOllama(params: InvokeParams): Promise<InvokeResult> 
       },
       body: JSON.stringify(requestBody),
       signal: controller.signal,
+      dispatcher: new Agent({
+        headersTimeout: 3600000, // 60 minutes
+        bodyTimeout: 3600000,    // 60 minutes
+        connectTimeout: 3600000  // 60 minutes
+      }),
     });
     
     // We don't clear timeout here because we need to wait for the stream to finish
@@ -208,6 +214,7 @@ export async function invokeOllama(params: InvokeParams): Promise<InvokeResult> 
     let content = "";
     let done = false;
     let finalData: any = null;
+    let chunkCount = 0;
 
     while (!done) {
       const { value, done: readerDone } = await reader.read();
@@ -217,6 +224,11 @@ export async function invokeOllama(params: InvokeParams): Promise<InvokeResult> 
       }
       
       const chunk = decoder.decode(value, { stream: true });
+      chunkCount++;
+      if (chunkCount % 50 === 0) {
+        process.stdout.write('.'); // Visual feedback
+      }
+
       // Ollama sends multiple JSON objects in one chunk sometimes
       const lines = chunk.split('\n').filter(line => line.trim() !== '');
       
@@ -234,6 +246,7 @@ export async function invokeOllama(params: InvokeParams): Promise<InvokeResult> 
         }
       }
     }
+    console.log(''); // Newline after dots
     
     clearTimeout(timeoutId);
     

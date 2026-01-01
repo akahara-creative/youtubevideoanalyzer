@@ -6,11 +6,11 @@ import { processSeoArticleJob } from '../server/seoArticleJobProcessor.ts';
 // Force Local LLM settings
 process.env.USE_OLLAMA = 'true';
 process.env.OLLAMA_MODEL = 'qwen2.5:72b';
-process.env.OLLAMA_NUM_CTX = '32768';
-process.env.OLLAMA_TIMEOUT = '1200000'; // 20 minutes
+process.env.OLLAMA_NUM_CTX = '20480'; // 20k context: Fits ~14k docs + generation
+process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes
 
 async function main() {
-  console.log('Starting Local LLM Test (Tuned Prompts) with Qwen2.5:72b...');
+  console.log('Starting Local LLM Test (Job 80 - Deep Understanding Logic #1856+#1896) with Qwen2.5:72b...');
   const db = await getDb();
   if (!db) {
     console.error('DB connection failed');

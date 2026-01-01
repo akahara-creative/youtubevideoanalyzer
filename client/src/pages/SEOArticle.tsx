@@ -428,7 +428,10 @@ export default function SEOArticle() {
                 {history.map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex-1">
-                      <h3 className="font-semibold">{item.theme}</h3>
+                      <h3 className="font-semibold">
+                        <span className="mr-2 text-primary font-mono">#{item.id}</span>
+                        {item.theme}
+                      </h3>
                       <p className="text-sm text-muted-foreground">
                         {new Date(item.createdAt).toLocaleString('ja-JP')}
                       </p>

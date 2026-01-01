@@ -168,10 +168,11 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
           .from(ragDocuments)
           .where(eq(ragDocuments.pickedUp, 1));
         
-        // 3. Theme/Keyword-based retrieval (NEW)
+        // 3. Theme/Keyword-based retrieval (NEW) - DISABLED for stability (Job 44 reproduction)
         // Search for documents containing "仕組み化" or other keywords in content or tags
         // We use a simple LIKE query on content for now as it's most robust if tags are missing
         // Also include remarks in the search to capture intent (e.g. "Systemization")
+        /*
         const themeKeywords = [job.theme, job.remarks || '', ...keywords].join(' ');
         // Extract potential keywords (simple split)
         const potentialTags = (job.theme + ' ' + (job.remarks || '')).split(/[\s　]+/).filter(w => w.length > 1);
@@ -185,6 +186,8 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
              .limit(5); // Limit to 5 most relevant by keyword match
            console.log(`[SEO Job ${jobId}] Found ${keywordDocs.length} documents matching theme keywords: ${potentialTags.join(', ')}`);
         }
+        */
+        let keywordDocs: typeof ragDocs = [];
 
         // Combine and deduplicate
         const allDocs = [...priorityDocs, ...keywordDocs];
@@ -204,7 +207,20 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     let ragContext = '';
     
     if (ragDocs.length > 0) {
-      ragContext = ragDocs.map(doc => `### RAGドキュメント\n${doc.content}`).join('\n\n---\n\n') + '\n\n';
+      // Define roles for specific IDs (User Request Job 82 - Deep Understanding)
+      const ragRoles: Record<number, string> = {
+        1856: "【核となる思考OS】読者の感情を抉り取るための「通るオファーのロジック（6章構成）」。単なる解説ではなく、読者の痛みを暴き、共感させるための設計図。",
+        4: "【文体・ルールの補強】#1856の感情的アプローチを支えるための、赤原スタイルの基礎ルール。",
+        1896: "【行間の詰め方の事例】「100人中100人が同じ理解をする」ための、徹底的な背景描写と文脈説明のサンプル。読み手の理解の隙間を埋める書き方の手本。",
+        1841: "【市場の現実（証拠）】稼げない根本原因（労働収入・競合過多）を論理的に説明するための理論武装資料。"
+      };
+
+      ragContext = ragDocs.map(doc => {
+        const roleInstruction = ragRoles[doc.id] 
+          ? `\n【利用指示】このドキュメントは「${ragRoles[doc.id]}」として参照し、その役割に沿って活用してください。` 
+          : '';
+        return `### RAGドキュメント (ID: ${doc.id})${roleInstruction}\n${doc.content}`;
+      }).join('\n\n---\n\n') + '\n\n';
     }
     
     // Fetch competitor docs from RAG
@@ -221,12 +237,13 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
 
     if (competitorContext) {
       ragContext += competitorContext + '\n\n';
-    } else if (allAnalyses && allAnalyses.length > 0) {
+    } /* else if (allAnalyses && allAnalyses.length > 0) {
       // Fallback to in-memory analyses if RAG fetch failed
+      // DISABLED: This causes massive context bloat (50k+ chars) which crashes Local LLM
       ragContext += allAnalyses
         .map(a => `記事タイトル: ${a.title}\n記事内容: ${a.content || '(内容なし)'} キーワード出現: ${JSON.stringify(a.keywordOccurrences || {})}`)
         .join('\n\n---\n\n');
-    }
+    } */
     
     ragContext += `\n\n### 読者の痛み・報われない希望\n${painPoints.join('\n')}\n\n### 生の声\n${realVoices.join('\n')}\n\n### 苦労したエピソードに繋げやすいキーワード\n${storyKeywords.join('\n')}\n\n### オファーへの橋渡し\n${offerBridge.join('\n')}`;
     // Step 4: Create SEO criteriaa
@@ -241,6 +258,13 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     
     // Step 5: Generate article structure
     console.log(`[SEO Job ${jobId}] Step 5: Generating article structure...`);
+    console.log(`[SEO Job ${jobId}] ragContext length: ${ragContext.length}`); // DEBUG: Check total context size
+    try {
+      const fs = await import('fs');
+      fs.writeFileSync('/Users/koyanagimakotohiroshi/youtube-video-analyzer/debug_rag_context.txt', `Length: ${ragContext.length}\n\nPreview:\n${ragContext.substring(0, 1000)}`);
+    } catch (e) {
+      console.error('Failed to write debug log', e);
+    }
     const structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, job.remarks || undefined, job.offer || undefined);
     console.log(`[SEO Job ${jobId}] structureResult:`, JSON.stringify(structureResult));
     let structureMarkdown = structureResult.structure;
@@ -283,9 +307,9 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     console.log(`[SEO Job ${jobId}] Step 7: Checking and refining article quality...`);
     
     // Refine with personas first
-    const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
-    const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria);
-    // const refinedArticle = article; // Skip refinement to prevent truncation
+    // const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
+    // const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria);
+    const refinedArticle = article; // Skip refinement to prevent truncation
     
     // Update article if refined
     if (refinedArticle !== article) {
