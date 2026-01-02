@@ -265,7 +265,7 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     } catch (e) {
       console.error('Failed to write debug log', e);
     }
-    const structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, job.remarks || undefined, job.offer || undefined);
+    const structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, generatedPersonas, job.remarks || undefined, job.offer || undefined);
     console.log(`[SEO Job ${jobId}] structureResult:`, JSON.stringify(structureResult));
     let structureMarkdown = structureResult.structure;
     

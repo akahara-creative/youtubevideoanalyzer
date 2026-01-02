@@ -1,4 +1,5 @@
 import { invokeLLM, InvokeParams } from './_core/llm';
+import { GeneratedPersonas, generateTargetPersona, generateWriterPersona, generateEditorPersona } from './personaGenerator';
 
 /**
  * SEO記事生成の8ステッププロセス
@@ -136,7 +137,7 @@ export async function analyzeTopArticles(keyword: string, allKeywords: string[])
   console.log(`[SEO記事分析] キーワード「${keyword}」の上位記事を検索中...`);
   
   // 1. Google検索で上位記事のURLを取得
-  const urls = await searchGoogle(keyword, 3); // 3記事に制限（処理時間考慮）
+  const urls = await searchGoogle(keyword, 5); // 5記事に拡大（ランキング上位狙い）
   
   if (urls.length === 0) {
     console.warn(`[SEO記事分析] キーワード「${keyword}」の検索結果が見つかりませんでした。シミュレーションに切り替えます。`);
@@ -705,6 +706,7 @@ export async function createArticleStructure(
   storyKeywords: string[],
   offerBridge: string[],
   conclusionKeywords: string[] = [],
+  generatedPersonas: GeneratedPersonas,
   remarks?: string,
   offer?: string
 ): Promise<{ structure: string; estimates: { wordCount: number; h2Count: number; h3Count: number; keywordCounts: Record<string, number> } }> {
@@ -722,6 +724,9 @@ export async function createArticleStructure(
     .map(r => `- ${r.related}: 最低${r.minCount}回`)
     .join('\n');
 
+  // Writer Persona Description
+  const writerPersonaDescription = generatedPersonas?.writer?.description || "赤原（詳細不明）";
+
   // 1. Initial Structure Generation
   console.log("[createArticleStructure] Generating initial structure...");
   const initialResponse = await invokeLLM({
@@ -729,8 +734,8 @@ export async function createArticleStructure(
       {
         role: "system",
         content: process.env.USE_OLLAMA === 'true' 
-          ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, remarks, offer)
-          : getStructureSystemPrompt(authorName, seoCriteria, ragContext, remarks, offer)
+          ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
+          : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
       },
       {
         role: "user",
@@ -780,30 +785,73 @@ ${content}`
   });
 
   const critique = critiqueResponse.choices[0].message.content;
-  console.log("[createArticleStructure] Critique Result:", critique);
+  console.log("[createArticleStructure] Reader Critique Result:", critique);
+
+  // 2.5. Editor Persona Critique (Quality Control)
+  console.log("[createArticleStructure] Running Editor Persona Critique...");
+  const editorPersonaDescription = generatedPersonas?.editor?.role ? 
+    `あなたは「${generatedPersonas.editor.role}」です。\n性格: ${generatedPersonas.editor.tone}\nチェックポイント: ${generatedPersonas.editor.checkPoints.join(', ')}` : 
+    "あなたは「厳格な構成作家」です。";
+
+  const editorCritiqueResponse = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: `${editorPersonaDescription}
+提示された記事構成を、**「一つの作品（読み物）」としての完成度**で厳しく判定してください。
+
+【あなたの判断基準】
+1. **作品としての「熱」があるか？**
+   - 単なる情報の羅列（解説記事）になっていないか？
+   - 読者の感情を揺さぶる「ドラマ」や「カタルシス」が設計されているか？
+2. **論理の整合性（A→C→G→H）**
+   - 導入の「悩み」から、結論の「解決策」まで、論理が一本の線で繋がっているか？
+   - 途中で話が脱線したり、矛盾したりしていないか？
+3. **赤原としての「鋭さ」**
+   - 筆者（赤原）のキャラクターが活きているか？
+   - 凡庸な「いい人」になっていないか？（毒や棘が必要）
+
+【出力形式】
+ダメ出しがある場合は、具体的に「第X章の展開が弱い」「ここは矛盾している」と指摘してください。
+完璧なら「修正なし」と答えてください。`
+      },
+      {
+        role: "user",
+        content: `以下の記事構成を評価してください：
+${content}`
+      }
+    ]
+  });
+  const editorCritique = editorCritiqueResponse.choices[0].message.content;
+  console.log("[createArticleStructure] Editor Critique Result:", editorCritique);
 
   // 3. Refinement (if needed)
-  if (critique && !critique.includes("修正なし")) {
-    console.log("[createArticleStructure] Refining structure based on critique...");
+  const needsRefinement = (critique && !critique.includes("修正なし")) || (editorCritique && !editorCritique.includes("修正なし"));
+
+  if (needsRefinement) {
+    console.log("[createArticleStructure] Refining structure based on critiques...");
     const refineResponse = await invokeLLM({
       messages: [
         {
           role: "system",
           content: process.env.USE_OLLAMA === 'true' 
-            ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, remarks, offer)
-            : getStructureSystemPrompt(authorName, seoCriteria, ragContext, remarks, offer)
+            ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
+            : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
         },
         {
           role: "user",
-          content: `作成した構成に対して、読者（ペルソナ）から以下の厳しい指摘がありました。
+          content: `作成した構成に対して、以下の厳しい指摘がありました。
 
-【読者の指摘】
-${critique}
+【読者（ペルソナ）からの指摘】
+${critique || '特になし'}
+
+【構成作家（編集者）からの指摘】
+${editorCritique || '特になし'}
 
 【指示】
-この指摘を踏まえて、構成を修正してください。
-**特に「読者のウォンツ（顕在的欲求）」から入り、自然に「本質的解決策（H）」へ誘導する流れ（A→C→G→H）を強化してください。**
-読者を置いてけぼりにせず、彼らの味方として語りかける構成に直してください。
+これらの指摘を全て踏まえて、構成を修正してください。
+**「読者の感情（ウォンツ）」を満たしつつ、「作品としての完成度（論理・熱量）」を高めてください。**
+赤原としての「鋭さ」と「共感」を両立させた、最高傑作に仕上げてください。
 
 出力は再度 [ESTIMATES] と [STRUCTURE] の形式で行ってください。`
         }
@@ -912,7 +960,7 @@ export async function generateSEOArticle(
 【執筆者ペルソナ：${personas.writer.name}】
 性格・トーン: ${personas.writer.tone}
 執筆スタイル: ${personas.writer.style}
-哲学: ${personas.writer.philosophy}
+詳細定義（思考・口調）: ${personas.writer.description}
 
 【ターゲット読者ペルソナ】
 特徴: ${personas.target.characteristics}
@@ -1295,6 +1343,16 @@ export async function generateFullSEOArticle(
   const searchKeywords = await generateSearchKeywords(trafficKeywords);
   console.log(`[SEO記事生成] 検索ワード: ${searchKeywords.join(', ')}`);
 
+  console.log('[SEO記事生成] ステップ2.5: ペルソナ生成');
+  const targetPersona = await generateTargetPersona(request.theme, request.theme); // Simplified
+  const writerPersona = await generateWriterPersona();
+  const editorPersona = await generateEditorPersona();
+  const generatedPersonas: GeneratedPersonas = {
+    target: targetPersona,
+    writer: writerPersona,
+    editor: editorPersona
+  };
+
   console.log('[SEO記事生成] ステップ3: 上位10記事の分析');
   const allAnalyses: ArticleAnalysis[] = [];
   for (const keyword of searchKeywords) {
@@ -1337,7 +1395,8 @@ export async function generateFullSEOArticle(
     allPainPoints,
     storyKeywords,
     offerBridge,
-    conclusionKeywords
+    conclusionKeywords,
+    generatedPersonas
   );
   const structure = structureResult.structure;
   console.log('[SEO記事生成] 構成作成完了');
@@ -1466,7 +1525,8 @@ ${personas.writer.style}
 【重要】
 1. **優先SEOキーワード（${priorityKeywords}）は、修正後の文章にも必ず含めてください。** 自然な文脈で織り交ぜてください。
 2. その他のSEOキーワードも極力維持してください。
-3. 修正後の**本文のみ**を出力してください。
+3. 修正後の**本文のみ**を出力してください（コードブロック禁止）。
+4. **スペース強調の禁止**: 「SNSでの集客 地獄」のようなスペース強調は絶対禁止です。助詞や読点を使ってください。
 `;
 
     const fixResponse = await invokeLLM({

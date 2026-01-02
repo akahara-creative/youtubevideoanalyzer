@@ -19,8 +19,10 @@ export interface WriterPersona {
   name: string;
   style: string;
   tone: string;
-  philosophy: string;
+  description: string; // Renamed from philosophy for consistency
 }
+
+
 
 export interface EditorPersona {
   role: string;
@@ -91,48 +93,92 @@ JSON形式で出力してください。
  * Generate Writer Persona (Akahara) from RAG
  */
 export async function generateWriterPersona(): Promise<WriterPersona> {
-  console.log('[generateWriterPersona] Generating writer persona...');
+  console.log('[generateWriterPersona] Generating writer persona from RAG...');
   
   const db = await getDb();
   if (!db) throw new Error("Database connection failed");
 
-  // Fetch documents tagged with "Akahara" or similar
-  // Assuming we have a tag named "author:akahara" or similar. 
-  // For now, we'll try to find tags related to "赤原"
-  
+  // Fetch documents tagged with "赤原" (Akahara)
+  // We want to capture "Voice/Tone" here.
+  // We EXCLUDE "Logic/Structure" docs (#1856, #1896, #1841) because they are already in the main ragContext.
+  // This prevents duplication and allows us to pack more "Voice Samples" (#4, #7, #8, etc.) into the context limit.
   const akaharaTags = await db.select().from(tags).where(eq(tags.displayName, "赤原"));
   let context = "";
 
   if (akaharaTags.length > 0) {
     const tagId = akaharaTags[0].id;
     const docs = await db.select({
-      content: ragDocuments.content
+      content: ragDocuments.content,
+      id: ragDocuments.id,
+      type: ragDocuments.type
     })
     .from(ragDocuments)
     .innerJoin(ragDocumentTags, eq(ragDocuments.id, ragDocumentTags.documentId))
     .where(eq(ragDocumentTags.tagId, tagId))
-    .limit(5);
+    .limit(20); // Fetch more candidates
 
-    context = docs.map(d => d.content).join("\n\n");
+    // Filter out Logic docs to avoid duplication with ragContext
+    // And exclude 'seo_article' type (we only want raw voice samples)
+    const voiceDocs = docs.filter(d => 
+      ![1856, 1896, 1841].includes(d.id) && 
+      d.type !== 'seo_article' // Assuming type is fetched
+    );
+    
+    // Prioritize specific Voice Samples: #8 (Confession), #7 (YinYang), #4 (Karma)
+    const priorityIds = [8, 7, 4];
+    voiceDocs.sort((a, b) => {
+      const aP = priorityIds.indexOf(a.id);
+      const bP = priorityIds.indexOf(b.id);
+      if (aP !== -1 && bP !== -1) return aP - bP; // Both in priority
+      if (aP !== -1) return -1; // a is priority
+      if (bP !== -1) return 1; // b is priority
+      return 0; // Keep original order
+    });
+
+    // Helper to strip HTML and junk
+    const cleanContent = (text: string) => {
+      return text
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/━━　MyASP.*/s, '') // Remove MyASP footer
+        .replace(/Copyright.*/s, '') // Remove Copyright
+        .trim();
+    };
+
+    // Take top 10 Voice docs, but ensure we fit the most important ones
+    context = voiceDocs.slice(0, 10).map(d => {
+      let content = cleanContent(d.content);
+      // Truncate individual docs if too long (e.g. #8 is 25k)
+      // We want to keep the BEGINNING of #8 (Confession)
+      if (content.length > 5000) {
+        content = content.substring(0, 5000) + "\n...(truncated)...";
+      }
+      return `【赤原の口調サンプル (RAG #${d.id})】\n${content}`;
+    }).join("\n\n");
   }
 
-  // If no specific RAG docs, use default persona definition
+  // If no specific RAG docs, use default persona definition (Fallback)
   if (!context) {
     context = `
-    赤原スタイル:
-    - 一人称は「僕」
-    - 過去の失敗や苦労を隠さずに話す
-    - 読者に寄り添いつつも、本質を突く厳しいことも言う
-    - 感情表現が豊かで、擬音語や口語を交える
-    - 「〜です、ます」調だが、堅苦しくない
+    赤原スタイル（基本定義）:
+    - 役割: 告発者・共犯者（先生ではない）
+    - 文体: #4（断定、感情、擬音語）
+    - スタンス: 読者の痛みを理解し、業界の嘘を暴く
     `;
   }
 
   return {
     name: "赤原",
-    style: "赤原スタイル（感情豊か、実体験ベース、本質的）",
+    style: "赤原スタイル（告発者・共犯者・高解像度）",
     tone: "親しみやすいが、プロフェッショナルとしての自信がある。「僕」という一人称。",
-    philosophy: context.substring(0, 1000) // Truncate for safety
+    description: `【赤原の思考OS】
+私はRAG #1856（市場分析ロジック）と #1896（行間の詰め方）を完璧にインストールした専門家です。
+市場の歪み（A-C-G）を熟知しており、読者がなぜ稼げないのかを論理的に説明できます。
+
+【赤原の口調・文体（Voice）】
+以下は私の話し方のサンプルです。このトーンを完全に再現してください。
+特に RAG #8（告白）の「弱さをさらけ出す姿勢」と、RAG #4（因果応報）の「断定的な語り口」を融合させてください。
+
+${context.substring(0, 12000)}` // Limit to 12k to avoid context overflow
   };
 }
 

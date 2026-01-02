@@ -123,51 +123,55 @@ export async function scrapeArticle(url: string): Promise<{
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
-    // タイムアウト設定（30秒）
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    // タイムアウト設定（60秒）と待機条件の変更
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
     
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+
+    // JSのレンダリング待ち
+    await new Promise(r => setTimeout(r, 3000));
+    
+    console.log('Page URL:', page.url());
     const data = await page.evaluate(() => {
-      // タイトル取得
       const title = document.title || '';
       
-      // ディスクリプション取得
-      const description = document.querySelector('meta[name="description"]')?.getAttribute('content') || 
-                          document.querySelector('meta[property="og:description"]')?.getAttribute('content') || '';
+      // Get headings
+      const h1 = Array.from(document.querySelectorAll('h1')).map(el => (el as HTMLElement).innerText.trim());
+      const h2 = Array.from(document.querySelectorAll('h2')).map(el => (el as HTMLElement).innerText.trim());
+      const h3 = Array.from(document.querySelectorAll('h3')).map(el => (el as HTMLElement).innerText.trim());
       
-      // 見出し取得
-      const getHeadings = (tagName: string) => {
-        return Array.from(document.querySelectorAll(tagName))
-          .map(el => (el as HTMLElement).innerText.trim())
-          .filter(text => text.length > 0);
-      };
-      
-      const h1 = getHeadings('h1');
-      const h2 = getHeadings('h2');
-      const h3 = getHeadings('h3');
-      
-      // 本文取得（メインコンテンツの推定）
-      // articleタグがあればそれ、なければmain、なければbody
+      // Get description
+      const description = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+
+      // Get content
       let contentEl = document.querySelector('article');
       if (!contentEl) contentEl = document.querySelector('main');
-      if (!contentEl) contentEl = document.body as any;
-      
-      if (!contentEl) return { title, description, h1, h2, h3, content: '', wordCount: 0 };
+      if (!contentEl) contentEl = document.body;
 
-      // 不要な要素を削除（クローンしてから操作）
-      const clone = contentEl.cloneNode(true) as HTMLElement;
-      const removeSelectors = [
-        'nav', 'header', 'footer', 'script', 'style', 'iframe', 
-        '.sidebar', '.menu', '.ad', '.advertisement', '#comments'
-      ];
-      removeSelectors.forEach(sel => {
-        const els = clone.querySelectorAll(sel);
-        els.forEach(el => el.remove());
-      });
-      
-      const content = clone.innerText.trim();
-      const wordCount = content.replace(/\s/g, '').length;
-      
-      return { title, description, h1, h2, h3, content, wordCount };
+      if (!contentEl) {
+        return { title, description, h1, h2, h3, content: '', wordCount: 0 };
+      }
+
+      // Clone and clean
+      try {
+        const clone = contentEl.cloneNode(true) as HTMLElement;
+        const removeSelectors = [
+          'nav', 'header', 'footer', 'script', 'style', 'iframe', 'noscript',
+          '.sidebar', '.menu', '.ad', '.advertisement', '#comments'
+        ];
+        removeSelectors.forEach(sel => {
+          const els = clone.querySelectorAll(sel);
+          els.forEach(el => el.remove());
+        });
+        
+        const content = clone.innerText.trim();
+        const wordCount = content.replace(/\s/g, '').length;
+        
+        return { title, description, h1, h2, h3, content, wordCount };
+      } catch (e) {
+        // Fallback if cloning fails
+        return { title, description, h1, h2, h3, content: (contentEl as HTMLElement).innerText, wordCount: 0 };
+      }
     });
 
     return data;

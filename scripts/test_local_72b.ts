@@ -7,16 +7,19 @@ import { processSeoArticleJob } from '../server/seoArticleJobProcessor.ts';
 process.env.USE_OLLAMA = 'true';
 process.env.OLLAMA_MODEL = 'qwen2.5:72b';
 process.env.OLLAMA_NUM_CTX = '20480'; // 20k context: Fits ~14k docs + generation
-process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes
+process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes // Job 84: 3-Persona Workflow (Writer=RAG, Reader=Victim, Editor=Artist) + Optimized Context
+
+const JOB_ID = 84;
 
 async function main() {
-  console.log('Starting Local LLM Test (Job 82 - Whistleblower Stance & Claude Quality) with Qwen2.5:72b...');
+  console.log("Starting Job 84 - Real Data Scraping & 3-Persona Council...");
   const db = await getDb();
   if (!db) {
     console.error('DB connection failed');
     return;
   }
 
+  /*
   // Job Data
   const theme = "動画編集で稼げない人が、SNS集客を始めても地獄を見る理由";
   const authorName = "赤原";
@@ -38,6 +41,9 @@ async function main() {
 
   const jobId = result.id;
   console.log(`Created Job ID: ${jobId}`);
+  */
+  const jobId = JOB_ID;
+  console.log(`Using Existing Job ID: ${jobId}`);
 
   // Run processor
   try {
