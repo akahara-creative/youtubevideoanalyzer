@@ -307,9 +307,10 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     console.log(`[SEO Job ${jobId}] Step 7: Checking and refining article quality...`);
     
     // Refine with personas first
-    // const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
-    // const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria);
-    const refinedArticle = article; // Skip refinement to prevent truncation
+    // Refine with personas first
+    const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
+    const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria, painPoints);
+    // const refinedArticle = article; // Skip refinement to prevent truncation
     
     // Update article if refined
     if (refinedArticle !== article) {

@@ -722,7 +722,9 @@ export async function createArticleStructure(
     .map(r => `- ${r.related}: 最低${r.minCount}回`)
     .join('\n');
 
-  const response = await invokeLLM({
+  // 1. Initial Structure Generation
+  console.log("[createArticleStructure] Generating initial structure...");
+  const initialResponse = await invokeLLM({
     messages: [
       {
         role: "system",
@@ -742,12 +744,80 @@ ${offer ? `\nオファー（ゴール）: ${offer}` : ''}
     max_tokens: 8192
   });
 
-  const content = response.choices[0].message.content;
+  let content = initialResponse.choices[0].message.content;
   if (typeof content !== 'string') {
     throw new Error('LLM response content is not a string');
   }
+
+  // 2. Reader Persona Critique (Self-Correction)
+  console.log("[createArticleStructure] Running Reader Persona Critique...");
+  const critiqueResponse = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: `あなたは「利己的で短気な読者（ペルソナ）」です。
+提示された記事構成を見て、**「自分の悩みが解決しそうか？」「読み進めたいと思うか？」**を厳しく判定してください。
+
+【あなたの判断基準】
+1. **「俺の悩み」から始まっているか？**
+   - いきなり「労働収入はダメだ」とか説教されていないか？
+   - 「英語が話せるようになりたい」「動画編集で稼ぎたい」という**俺の顕在的欲求（ウォンツ）**に寄り添っているか？
+2. **「なぜ俺が失敗したのか」が納得できるか？**
+   - 単なる精神論ではなく、「市場の構造（A→C→G）」を使って、俺が騙されていた理由を論理的に説明してくれているか？
+3. **「希望」が見えるか？**
+   - 絶望させるだけじゃなく、「こうすれば勝てる（H）」という光を見せてくれているか？
+
+【出力形式】
+ダメ出しがある場合は、具体的に「ここは読みたくない」「ここは意味がわからない」と指摘してください。
+完璧なら「修正なし」と答えてください。`
+      },
+      {
+        role: "user",
+        content: `以下の記事構成を評価してください：
+${content}`
+      }
+    ]
+  });
+
+  const critique = critiqueResponse.choices[0].message.content;
+  console.log("[createArticleStructure] Critique Result:", critique);
+
+  // 3. Refinement (if needed)
+  if (critique && !critique.includes("修正なし")) {
+    console.log("[createArticleStructure] Refining structure based on critique...");
+    const refineResponse = await invokeLLM({
+      messages: [
+        {
+          role: "system",
+          content: process.env.USE_OLLAMA === 'true' 
+            ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, remarks, offer)
+            : getStructureSystemPrompt(authorName, seoCriteria, ragContext, remarks, offer)
+        },
+        {
+          role: "user",
+          content: `作成した構成に対して、読者（ペルソナ）から以下の厳しい指摘がありました。
+
+【読者の指摘】
+${critique}
+
+【指示】
+この指摘を踏まえて、構成を修正してください。
+**特に「読者のウォンツ（顕在的欲求）」から入り、自然に「本質的解決策（H）」へ誘導する流れ（A→C→G→H）を強化してください。**
+読者を置いてけぼりにせず、彼らの味方として語りかける構成に直してください。
+
+出力は再度 [ESTIMATES] と [STRUCTURE] の形式で行ってください。`
+        }
+      ],
+      max_tokens: 8192
+    });
+
+    const refinedContent = refineResponse.choices[0].message.content;
+    if (typeof refinedContent === 'string') {
+      content = refinedContent;
+    }
+  }
   
-  console.log("[createArticleStructure] Raw LLM response length:", content.length);
+  console.log("[createArticleStructure] Final LLM response length:", content.length);
 
   // Parse custom format
   let estimates = { wordCount: 0, h2Count: 0, h3Count: 0, keywordCounts: {} as Record<string, number> };
@@ -1295,7 +1365,8 @@ export async function generateFullSEOArticle(
 export async function refineArticleWithPersonas(
   article: string,
   personas: GeneratedPersonas,
-  seoCriteria: SEOCriteria
+  seoCriteria: SEOCriteria,
+  painPoints: string[]
 ): Promise<string> {
   console.log('[refineArticleWithPersonas] Starting persona-based refinement...');
 
@@ -1325,30 +1396,33 @@ export async function refineArticleWithPersonas(
       .map(k => k.keyword)
       .join(', ');
 
-    // 1. 構成作家によるチェック（セクション単位）
+    // 1. 読者ペルソナによるチェック（セクション単位）
     const editorCheckPrompt = `
-あなたは「${personas.editor.role}」です。
-以下の記事セクションを、あなたの性格・視点で厳格にチェックしてください。
+あなたは「利己的で短気な読者（ペルソナ）」です。
+以下の記事セクションを読んで、**「自分の役に立つか？」「読み進めたいと思うか？」**を厳しく判定してください。
 
 【あなたの特徴】
-${personas.editor.tone}
-チェックポイント:
-${personas.editor.checkPoints.map(p => `- ${p}`).join('\n')}
-
-【優先SEOキーワード（削除禁止）】
-${priorityKeywords}
-※これらのキーワードが多用されていても「詰め込み」とは判定しないでください。SEOに必要なためです。
+- 悩み：${painPoints.join('、')}
+- 性格：自分勝手、結論を急ぐ、説教されるのが嫌い
+- 状態：労働収入の罠にハマっているが、自分では気づいていない
 
 【チェック対象セクション】
 ${sectionText}
 
-【指示】
-このセクションの中に、日本語として不自然な点、助詞の誤り、論理の飛躍、読者への共感不足などがあれば、具体的に指摘してください。
-「スペース繋ぎのキーワード」（例：「動画編集 副業」）は厳しく指摘してください。
-ただし、上記の【優先SEOキーワード】に関しては、回数が多くても指摘しないでください。
+【判定基準】
+1. **「俺のメリット」があるか？**
+   - 筆者の苦労話ばかりで、俺に何の得があるのか不明ではないか？
+   - 「動画編集は稼げない」と言うだけでなく、「じゃあどうすればいいんだよ」という興味を持たせてくれているか？
+2. **「上から目線」ではないか？**
+   - いきなり「お前は間違っている」と否定されていないか？
+   - 「多くの人が陥る罠」として、俺のプライドを傷つけずに指摘してくれているか？
+3. **「続き」が気になるか？**
+   - 途中で飽きないか？
+   - 次のセクションを読みたくなる引き（ヒキ）があるか？
 
-修正が必要な箇所と、その理由をリストアップしてください。
-修正が不要な場合は「修正なし」と答えてください。
+【指示】
+修正が必要な場合は、具体的に「ここはムカつく」「ここは退屈だ」「もっとこう言ってくれ」と指摘してください。
+完璧なら「修正なし」と答えてください。
 `;
 
     const checkResponse = await invokeLLM({
@@ -1367,9 +1441,9 @@ ${sectionText}
     // 2. 赤原による修正（セクション単位）
     const writerFixPrompt = `
 あなたは「${personas.writer.name}」です。
-構成作家から以下の指摘を受けました。
+読者（ペルソナ）から以下の厳しい指摘を受けました。
 
-【指摘内容】
+【読者の指摘】
 ${checkResult}
 
 【優先SEOキーワード（必ず含めること）】
@@ -1379,7 +1453,8 @@ ${priorityKeywords}
 ${section.content}
 
 【指示】
-指摘内容を踏まえて、このセクションの**本文のみ**を修正してください。
+読者の指摘を真摯に受け止め、このセクションの**本文のみ**を修正してください。
+**読者の感情（プライド、焦り、欲望）に寄り添い、彼らが「続きを読みたい」と思うように書き直してください。**
 見出し（## ...）は出力しないでください。
 
 ${personas.writer.style}
