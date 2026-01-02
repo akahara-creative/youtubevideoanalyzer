@@ -10,7 +10,7 @@ process.env.OLLAMA_NUM_CTX = '20480'; // 20k context: Fits ~14k docs + generatio
 process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes
 
 async function main() {
-  console.log('Starting Local LLM Test (Job 81 - Deep Logic & Persona Check) with Qwen2.5:72b...');
+  console.log('Starting Local LLM Test (Job 82 - Whistleblower Stance & Claude Quality) with Qwen2.5:72b...');
   const db = await getDb();
   if (!db) {
     console.error('DB connection failed');
