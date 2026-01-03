@@ -4,27 +4,32 @@ import { ragDocuments, tags, ragDocumentTags } from '../drizzle/schema';
 import { inArray, eq } from 'drizzle-orm';
 
 async function main() {
-  const db = await getDb();
-  if (!db) return;
-
-  const akaharaTags = await db.select().from(tags).where(eq(tags.displayName, "赤原"));
-  if (akaharaTags.length === 0) return;
-  const tagId = akaharaTags[0].id;
-
-  const docs = await db.select({
-    content: ragDocuments.content,
-    id: ragDocuments.id,
-    type: ragDocuments.type
-  })
-  .from(ragDocuments)
-  .innerJoin(ragDocumentTags, eq(ragDocuments.id, ragDocumentTags.documentId))
-  .where(eq(ragDocumentTags.tagId, tagId));
-  
-  docs.forEach(doc => {
-    if (doc.content.includes("MyASP")) {
-      console.log(`!!! ID ${doc.id} Contains MyASP !!!`);
+  try {
+    console.log('Connecting to database...');
+    const db = await getDb();
+    
+    // IDs to inspect
+    const targetIds = [1856, 1896, 1841];
+    
+    console.log(`Fetching RAG documents: ${targetIds.join(', ')}...`);
+    
+    const docs = await db.select().from(ragDocuments).where(inArray(ragDocuments.id, targetIds));
+    
+    console.log(`Found ${docs.length} documents.`);
+    
+    for (const doc of docs) {
+      console.log(`\n=== Document ID: ${doc.id} (Type: ${doc.type}) ===`);
+      // console.log(`Tags: ${doc.tags ? doc.tags.join(', ') : 'None'}`);
+      console.log('--- Content Start ---');
+      console.log(doc.content.substring(0, 1000)); // Show first 1000 chars
+      console.log('--- Content End ---');
     }
-  });
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('Error:', error);
+    process.exit(1);
+  }
 }
 
 main().catch(console.error).finally(() => process.exit());

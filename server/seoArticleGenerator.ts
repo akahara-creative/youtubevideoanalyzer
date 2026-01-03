@@ -1041,6 +1041,15 @@ Akaharaスタイルの真骨頂である「圧倒的な具体性」と「泥臭�
       ? getWritingSystemPromptLocal(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext)
       : getWritingSystemPrompt(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext);
 
+    // Programmatically append the H2 header to ensure correct formatting
+    // Ensure section.title has proper markdown (add ## if missing)
+    let header = section.title.trim();
+    if (!header.startsWith('#')) {
+       header = `## ${header}`;
+    }
+    // Add header to article
+    article += `\n\n${header}\n\n`;
+
     const sectionParams: InvokeParams = {
       messages: [
         {
@@ -1049,10 +1058,10 @@ Akaharaスタイルの真骨頂である「圧倒的な具体性」と「泥臭�
         },
         {
           role: "user",
-          content: `以下のセクションのみを執筆してください。他のセクションは書かないでください。
+          content: `以下のセクションの**本文のみ**を執筆してください。
+**見出し（${section.title}）はシステムが自動挿入するため、絶対に出力しないでください。**
 
-【執筆対象セクション】
-${section.title}
+【執筆対象セクション内容】
 ${section.content}
 
 ${!isFirstSection ? `
@@ -1067,31 +1076,33 @@ ${!isFirstSection ? `
 ` : ''}
 
 【絶対厳守のルール: 構成と分量】
-1. **構成の完全再現**: 指定されたH2タイトルとH3サブタイトルを「一言一句変えず」にそのまま使用してください。
-    - **注意**: タイトルには既にMarkdown記号（##, ###）が含まれています。これを二重にしないこと（例：「## ## 見出し」はNG）。そのまま出力してください。
+1. **H2見出し出力禁止**: H2見出しは書かず、いきなり本文（またはH3見出し）から書き始めてください。
 2. **文字数の遵守**: このセクションの目標文字数は**${targetSectionLength}文字**です。
     - **${targetSectionLength < 1500 ? '濃縮' : '疾走感'}**: 無駄な引き伸ばしは禁止です。指定された文字数前後で、最も効果的に感情と情報を伝えてください。
     - 短すぎても長すぎてもいけません。**${Math.floor(targetSectionLength * 0.9)}文字〜${Math.ceil(targetSectionLength * 1.2)}文字**の範囲に必ず収めてください。
 3. **備考欄の融合**: 備考欄の指示（相談者の話など）を、このセクションの内容に合わせて自然に組み込んでください。
 4. **キーワードの確実な挿入**: 指定された「キーワード」は、文脈の中で自然に、かつ**必ず**使用してください。文字数が少なくても、キーワードを省略することは許されません。
-
-出力は、指定されたH2見出しから書き始めてください。`
+5. **チャット返答の禁止**: 「承知しました」「以下に執筆します」などの前置きは一切不要です。記事の本文のみを出力してください。`
         }
       ]
     };
 
     const response = await invokeLLM({
       ...sectionParams,
-      max_tokens: 4096 // セクションごとなので4096で十分だが、余裕を持たせる
+      max_tokens: 4096
     });
 
     const content = response.choices[0].message.content;
     if (typeof content !== 'string') {
       throw new Error('LLM response content is not a string');
     }
-    console.log(`[generateSEOArticle] Section ${i + 1} start: ${content.substring(0, 100).replace(/\n/g, ' ')}...`);
+    
+    // Clean up content: Remove H2 if LLM disobeyed and outputted it anyway
+    const cleanContent = content.replace(/^##\s+.*\n/g, '').trim();
+    
+    console.log(`[generateSEOArticle] Section ${i + 1} start: ${cleanContent.substring(0, 100).replace(/\n/g, ' ')}...`);
 
-    article += content + "\n\n";
+    article += cleanContent + "\n\n";
   }
 
   // 途切れチェックと補完

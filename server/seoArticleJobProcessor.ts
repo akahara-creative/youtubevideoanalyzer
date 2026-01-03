@@ -261,9 +261,10 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     console.log(`[SEO Job ${jobId}] Step 5: Creating article structure...`);
     
     // Create Light Persona (Style only, remove heavy Description)
+    // IMPORTANT: Enforce "Reality Check Tone" here
     const lightWriterPersona = {
       ...generatedPersonas.writer,
-      description: "赤原（スタイル定義のみ。詳細な口調サンプルは執筆フェーズで使用）"
+      description: "【重要：口調定義】\n・「〜です/〜ます」調（敬体）で統一。\n・ただし、単なる丁寧語は禁止。\n・「相手が薄々気づきつつも、目を背け続けている現実を、実体験と相談エピソードを軸に突きつける」スタイル。\n・「僕はこれが闇だと感じている。あなたはどう思う？」と、客観的証拠を前提に読者を追い詰めること。\n・この口調で構成案を作成すること。"
     };
     
     const lightPersonas = {
