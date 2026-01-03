@@ -1,4 +1,4 @@
-Length: 67756
+Length: 60411
 
 Preview:
 ### RAGドキュメント (ID: 4)
