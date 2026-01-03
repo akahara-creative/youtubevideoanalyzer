@@ -9,10 +9,10 @@ process.env.OLLAMA_MODEL = 'qwen2.5:72b';
 process.env.OLLAMA_NUM_CTX = '20480'; // 20k context: Fits ~14k docs + generation
 process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes // Job 84: 3-Persona Workflow (Writer=RAG, Reader=Victim, Editor=Artist) + Optimized Context
 
-const JOB_ID = 89; // Job 89 (Reality Check Style - Endurance Test)
+const JOB_ID = 90; // Job 90 (Polite Reality Check Style - Endurance Test)
 
 async function main() {
-  console.log(`Starting Local 72B Test for Job ${JOB_ID} - Reality Check Style`);
+  console.log(`Starting Local 72B Test for Job ${JOB_ID} - Polite Reality Check Style`);
   const db = await getDb();
   if (!db) {
     console.error('DB connection failed');
