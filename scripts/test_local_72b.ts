@@ -9,10 +9,10 @@ process.env.OLLAMA_MODEL = 'qwen2.5:72b';
 process.env.OLLAMA_NUM_CTX = '20480'; // 20k context: Fits ~14k docs + generation
 process.env.OLLAMA_TIMEOUT = '3600000'; // 60 minutes // Job 84: 3-Persona Workflow (Writer=RAG, Reader=Victim, Editor=Artist) + Optimized Context
 
-const JOB_ID = 86; // Job 86 (Real Data + Fixed Persona + Formats)
+const JOB_ID = 88; // Job 88 (Context Separation Strategy - Retry)
 
 async function main() {
-  console.log(`Starting Local 72B Test for Job ${JOB_ID} - Real Data Scraping & 3-Persona Council`);
+  console.log(`Starting Local 72B Test for Job ${JOB_ID} - Context Separation Strategy`);
   const db = await getDb();
   if (!db) {
     console.error('DB connection failed');

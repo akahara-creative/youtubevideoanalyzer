@@ -1,5 +1,11 @@
 import { invokeLLM, InvokeParams } from './_core/llm';
 import { GeneratedPersonas, generateTargetPersona, generateWriterPersona, generateEditorPersona } from './personaGenerator';
+import { 
+  getStructureSystemPrompt, 
+  getStructureSystemPromptLocal, 
+  getWritingSystemPrompt, 
+  getWritingSystemPromptLocal 
+} from "./prompts/seoPrompts";
 
 /**
  * SEO記事生成の8ステッププロセス
@@ -743,7 +749,15 @@ export async function createArticleStructure(
 ${remarks ? `\n備考（意図・方向性）: ${remarks}` : ''}
 ${offer ? `\nオファー（ゴール）: ${offer}` : ''}
 
-このテーマ${remarks ? 'と備考' : ''}で、競合に圧勝する記事構成を作成してください。指定された[ESTIMATES]と[STRUCTURE]の形式で出力してください。`
+このテーマ${remarks ? 'と備考' : ''}で、競合に圧勝する記事構成を作成してください。
+
+【重要：絶対遵守ルール】
+1. **目標文字数: ${seoCriteria.targetWordCount}文字以上**（これを下回る構成は禁止）
+2. **H2見出し数: ${seoCriteria.targetH2Count}個以上**（これより少ないと文字数が足りません）
+3. **H3見出し数: ${seoCriteria.targetH3Count}個以上**
+4. 競合の2倍のボリュームを目指してください。
+
+指定された[ESTIMATES]と[STRUCTURE]の形式で出力してください。`
       }
     ],
     max_tokens: 8192
@@ -921,13 +935,7 @@ ${editorCritique || '特になし'}
  * ステップ6: 記事生成
  * 構成を維持しつつSEO基準を満たす記事を生成
  */
-import { GeneratedPersonas } from "./personaGenerator";
-import { 
-  getStructureSystemPrompt, 
-  getStructureSystemPromptLocal, 
-  getWritingSystemPrompt, 
-  getWritingSystemPromptLocal 
-} from "./prompts/seoPrompts";
+
 
 export async function generateSEOArticle(
   structure: string,

@@ -223,13 +223,14 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
       }).join('\n\n---\n\n') + '\n\n';
     }
     
-    // Fetch competitor docs from RAG
+    // Fetch competitor docs from RAG (Compressed for Step 5)
     let competitorContext = '';
     if (db && competitorDocIds.length > 0) {
       try {
         const competitorDocs = await db.select().from(ragDocuments).where(inArray(ragDocuments.id, competitorDocIds));
-        competitorContext = competitorDocs.map(d => `### 競合記事データ (ID: ${d.id})\n${d.content}`).join('\n\n---\n\n');
-        console.log(`[SEO Job ${jobId}] Fetched ${competitorDocs.length} competitor docs from RAG`);
+        // Compress: First 1000 chars (Summary) - ragDocuments has no title
+        competitorContext = competitorDocs.map(d => `### 競合記事データ (ID: ${d.id})\n内容要約:\n${d.content.substring(0, 1000)}...\n(以下略)`).join('\n\n---\n\n');
+        console.log(`[SEO Job ${jobId}] Fetched and compressed ${competitorDocs.length} competitor docs from RAG`);
       } catch (e) {
         console.error(`[SEO Job ${jobId}] Error fetching competitor docs:`, e);
       }
@@ -246,7 +247,7 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     } */
     
     ragContext += `\n\n### 読者の痛み・報われない希望\n${painPoints.join('\n')}\n\n### 生の声\n${realVoices.join('\n')}\n\n### 苦労したエピソードに繋げやすいキーワード\n${storyKeywords.join('\n')}\n\n### オファーへの橋渡し\n${offerBridge.join('\n')}`;
-    // Step 4: Create SEO criteriaa
+    // Step 4: Create SEO criteria
     console.log(`[SEO Job ${jobId}] Step 4: Creating SEO criteria...`);
     const criteria = await createSEOCriteria(allAnalyses, job.targetWordCount);
     console.log(`[SEO Job ${jobId}] Created criteria with ${criteria.targetKeywords.length} keywords`);
@@ -256,18 +257,51 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
       progress: 60,
     });
     
-    // Step 5: Generate article structure
-    console.log(`[SEO Job ${jobId}] Step 5: Generating article structure...`);
-    console.log(`[SEO Job ${jobId}] ragContext length: ${ragContext.length}`); // DEBUG: Check total context size
-    try {
-      const fs = await import('fs');
-      fs.writeFileSync('/Users/koyanagimakotohiroshi/youtube-video-analyzer/debug_rag_context.txt', `Length: ${ragContext.length}\n\nPreview:\n${ragContext.substring(0, 1000)}`);
-    } catch (e) {
-      console.error('Failed to write debug log', e);
+    // Step 5: Create article structure (Using Light Persona to save context)
+    console.log(`[SEO Job ${jobId}] Step 5: Creating article structure...`);
+    
+    // Create Light Persona (Style only, remove heavy Description)
+    const lightWriterPersona = {
+      ...generatedPersonas.writer,
+      description: "赤原（スタイル定義のみ。詳細な口調サンプルは執筆フェーズで使用）"
+    };
+    
+    const lightPersonas = {
+      ...generatedPersonas,
+      writer: lightWriterPersona
+    };
+
+    let structureResult;
+    let structureMarkdown = "";
+    
+    // Try to parse existing structure if available (for resume)
+    if (job.structure) {
+      try {
+        const parsed = JSON.parse(job.structure);
+        if (parsed.structure) {
+          structureResult = parsed;
+          structureMarkdown = parsed.structure;
+          console.log(`[SEO Job ${jobId}] Using existing structure`);
+        }
+      } catch (e) {
+        console.warn(`[SEO Job ${jobId}] Failed to parse potential JSON structure:`, e);
+      }
     }
-    const structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, generatedPersonas, job.remarks || undefined, job.offer || undefined);
+    
+    if (!structureMarkdown) {
+      console.log(`[SEO Job ${jobId}] ragContext length: ${ragContext.length}`); // DEBUG: Check total context size
+      try {
+        const fs = await import('fs');
+        fs.writeFileSync('/Users/koyanagimakotohiroshi/youtube-video-analyzer/debug_rag_context.txt', `Length: ${ragContext.length}\n\nPreview:\n${ragContext.substring(0, 1000)}`);
+      } catch (e) {
+        console.error('Failed to write debug log', e);
+      }
+      // Pass lightPersonas to avoid context overflow
+      structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, lightPersonas, job.remarks || undefined, job.offer || undefined);
+      structureMarkdown = structureResult.structure;
+    }
+    
     console.log(`[SEO Job ${jobId}] structureResult:`, JSON.stringify(structureResult));
-    let structureMarkdown = structureResult.structure;
     
     // Sanitize structure: If it looks like JSON, try to extract the inner structure
     if (structureMarkdown.trim().startsWith('{')) {
