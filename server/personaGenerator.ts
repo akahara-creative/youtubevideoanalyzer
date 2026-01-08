@@ -13,6 +13,7 @@ export interface TargetPersona {
   struggles: string; // Struggles with traffic source topic
   frustrations: string; // Anger/worries about the market
   latentAptitude: string; // Why they are suited for the solution
+  rejectionCriteria: string; // What makes them leave immediately
 }
 
 export interface WriterPersona {
@@ -55,6 +56,9 @@ export async function generateTargetPersona(characteristics: string, theme: stri
 2. **集客元ネタでの苦労**: 記事テーマの「集客元となるネタ（悩み）」に関して、この人物がどのような苦労、失敗、絶望を味わってきたかを描写してください。
 3. **市場への怒り・葛藤**: 既存の解決策や市場の常識に対して、どのような怒り、不信感、葛藤を抱いているかを描写してください。
 4. **潜在的な適性**: 本人は自覚していないが、これまでの苦労や経験から、実は「解決策となるネタ」に向いていると言える理由（潜在的な適性）を論理的に導き出してください。
+5. **離脱ポイント（拒絶反応）**: この人物は人生に疲れ、ノウハウコレクターとして搾取され続けてきました。
+   そのため、「説教」「上から目線の指導」「努力の強要」「解決策（仕組み化など）に対する厳しい指摘」に対して、強い拒絶反応を示します。
+   具体的に、どのような言葉や態度を取られると「もう読みたくない」と感じて離脱するかを定義してください。
 
 【出力フォーマット】
 JSON形式で出力してください。
@@ -66,7 +70,8 @@ JSON形式で出力してください。
   },
   "struggles": "集客元ネタでの苦労...",
   "frustrations": "市場への怒り・葛藤...",
-  "latentAptitude": "潜在的な適性..."
+  "latentAptitude": "潜在的な適性...",
+  "rejectionCriteria": "離脱ポイント（拒絶反応）..."
 }
 `;
 
@@ -85,7 +90,8 @@ JSON形式で出力してください。
     episodes: result.episodes,
     struggles: result.struggles,
     frustrations: result.frustrations,
-    latentAptitude: result.latentAptitude
+    latentAptitude: result.latentAptitude,
+    rejectionCriteria: result.rejectionCriteria
   };
 }
 
@@ -139,8 +145,8 @@ export async function generateWriterPersona(): Promise<WriterPersona> {
     const cleanContent = (text: string) => {
       return text
         .replace(/<[^>]*>/g, '') // Remove HTML tags
-        .replace(/━━　MyASP.*/s, '') // Remove MyASP footer
-        .replace(/Copyright.*/s, '') // Remove Copyright
+        .replace(/━━　MyASP[\s\S]*/, '') // Remove MyASP footer
+        .replace(/Copyright[\s\S]*/, '') // Remove Copyright
         .trim();
     };
 
@@ -212,24 +218,23 @@ export async function generateEditorPersona(): Promise<EditorPersona> {
 
   if (!context) {
     context = `
-    構成作家チェックポイント:
-    - 日本語として自然か（てにをは、接続詞）
-    - キーワードの詰め込みが不自然でないか
-    - 論理の飛躍がないか
-    - 読者の感情を置いてけぼりにしていないか
-    - 具体例は十分か
+    演出家・構成作家の視点:
+    - 読者が「没入」できているか？
+    - 論理の飛躍（行間の隙間）はないか？（100人中100人が理解できるか）
+    - カタルシス（感情の解放）はあるか？
+    - 「赤原」というキャラクターが死んでいないか？（丸くなっていないか）
     `;
   }
 
   return {
-    role: "構成作家（厳格な品質管理者）",
+    role: "演出家・シナリオライター（物語の品質責任者）",
     checkPoints: [
-      "日本語の自然さ（助詞、係り受け）",
-      "キーワードの自然な織り込み（詰め込みNG）",
-      "論理的整合性",
-      "エピソードの具体性",
-      "読者への共感度"
+      "没入感（読者を物語に引き込めているか）",
+      "行間の繋がり（100人中100人が理解できる論理展開か）",
+      "カタルシス（絶望から希望への感情曲線）",
+      "キャラクターの鋭さ（赤原らしさが生きているか）",
+      "読者への憑依度（他人事になっていないか）"
     ],
-    tone: "冷静沈着、論理的、妥協を許さないプロフェッショナル"
+    tone: "情熱的かつ論理的。作品のクオリティに対して一切の妥協を許さない。"
   };
 }

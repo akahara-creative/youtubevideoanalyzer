@@ -38,8 +38,18 @@ export async function searchGoogle(keyword: string, limit: number = 5): Promise<
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
     
     // Google検索（日本語）
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const resourceType = req.resourceType();
+      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
     await page.goto(`https://www.google.co.jp/search?q=${encodeURIComponent(keyword)}&hl=ja&gl=jp`, { 
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded',
       timeout: 30000 
     });
     
@@ -124,7 +134,17 @@ export async function scrapeArticle(url: string): Promise<{
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
     // タイムアウト設定（60秒）と待機条件の変更
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const resourceType = req.resourceType();
+      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 

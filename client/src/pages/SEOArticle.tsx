@@ -38,6 +38,7 @@ export default function SEOArticle() {
   const [showHistory, setShowHistory] = useState(false);
   const [currentJobId, setCurrentJobId] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
+  const [progressDetail, setProgressDetail] = useState("");
   const [showEnhanceDialog, setShowEnhanceDialog] = useState(false);
   const [enhanceOption, setEnhanceOption] = useState<"keywords" | "full">("keywords");
   const [enhancedArticle, setEnhancedArticle] = useState<string | null>(null);
@@ -165,6 +166,9 @@ export default function SEOArticle() {
     }
     if (jobStatus.progress !== null) {
       setProgress(jobStatus.progress);
+    }
+    if (jobStatus.progressDetail) {
+      setProgressDetail(jobStatus.progressDetail);
     }
 
     if (jobStatus.status === "completed") {
@@ -503,6 +507,12 @@ export default function SEOArticle() {
                 <span>進捗: {progress}%</span>
                 <span>{currentStep === 0 ? "未開始" : steps[currentStep - 1]?.title}</span>
               </div>
+              {/* Progress Detail Message */}
+              {(jobStatus?.progressDetail || progressDetail) && (
+                <div className="text-xs text-primary mb-2 animate-pulse font-mono">
+                  {jobStatus?.progressDetail || progressDetail}
+                </div>
+              )}
               <div className="w-full bg-muted rounded-full h-2">
                 <div 
                   className="bg-primary h-2 rounded-full transition-all duration-300"

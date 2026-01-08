@@ -299,6 +299,7 @@ export const seoArticleJobs = mysqlTable("seoArticleJobs", {
   article: longtext("article"), // Final article content
   qualityCheck: longtext("qualityCheck"), // JSON: quality check results
   errorMessage: text("errorMessage"),
+  progressDetail: text("progressDetail"), // Detailed progress message (e.g., "Analyzing article 1/10...")
   autoEnhance: int("autoEnhance").default(0).notNull(), // 0: manual, 1: auto-enhance after generation
   batchId: varchar("batchId", { length: 64 }), // Batch ID for CSV batch processing
   completedAt: timestamp("completedAt"), // Completion timestamp

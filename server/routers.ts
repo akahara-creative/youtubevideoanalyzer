@@ -1728,6 +1728,7 @@ ${ragContext}`
           errorMessage: job.errorMessage,
           createdAt: job.createdAt,
           updatedAt: job.updatedAt,
+          progressDetail: job.progressDetail,
         };
       }),
 

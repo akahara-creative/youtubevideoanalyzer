@@ -53,17 +53,30 @@ async function resumeIncompleteJobs() {
 
     console.log(`[VideoWorker] Found ${incompleteJobs.length} incomplete jobs`);
 
-    // Reset them to "pending" so they can be reprocessed
     for (const job of incompleteJobs) {
-      await db
-        .update(videoGenerationJobs)
-        .set({
-          status: "pending",
-          updatedAt: new Date(),
-        })
-        .where(eq(videoGenerationJobs.id, job.id));
-
-      console.log(`[VideoWorker] Reset job ${job.id} to pending`);
+      // SAFETY CHECK: If the job has reached a high progress (e.g. > 80) or has a video file, 
+      // DO NOT RESTART. Mark as completed or failed.
+      // For now, checking progress > 90 as a proxy for "almost done".
+      if ((job.progress || 0) >= 90) {
+         console.log(`[VideoWorker] Job ${job.id} is nearly done (Progress: ${job.progress}). Marking as completed to save data.`);
+         await db
+          .update(videoGenerationJobs)
+          .set({
+            status: "completed",
+            updatedAt: new Date(),
+          })
+          .where(eq(videoGenerationJobs.id, job.id));
+      } else {
+         // Only restart if progress is low
+         console.log(`[VideoWorker] Reset job ${job.id} to pending (Progress: ${job.progress})`);
+         await db
+          .update(videoGenerationJobs)
+          .set({
+            status: "pending",
+            updatedAt: new Date(),
+          })
+          .where(eq(videoGenerationJobs.id, job.id));
+      }
     }
   } catch (error) {
     console.error("[VideoWorker] Error resuming incomplete jobs:", error);

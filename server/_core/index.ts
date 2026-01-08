@@ -32,6 +32,10 @@ async function startServer() {
   // Start video generation worker
   const { startWorker } = await import("../videoGenerationWorker");
   startWorker().catch(console.error);
+
+  // Start SEO article generation worker
+  const { startSeoWorker } = await import("../seoWorker");
+  startSeoWorker().catch(console.error);
   
   const app = express();
   const server = createServer(app);
