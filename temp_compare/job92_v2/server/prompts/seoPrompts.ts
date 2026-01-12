@@ -7,8 +7,7 @@ export function getStructureSystemPrompt(
   ragContext: string,
   writerPersonaDescription: string,
   remarks?: string,
-  offer?: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  offer?: string
 ): string {
   const safeConclusion = ['結論キーワード']; // Simplified for now, passed from caller usually
 
@@ -59,13 +58,13 @@ RAG資料に基づき、以下の論理展開を**必ず**構成に組み込ん�
 
 1. **A）表面的解決策**: 
    - NG: 「多くの人はノウハウ収集に走ります。」
-   - OK: 「僕は狂ったように『${akaharaLogic?.A || 'ノウハウ'}』を買い漁りました。これさえあれば勝てると信じて。」
+   - OK: 「僕は狂ったようにノウハウを買い漁りました。これさえあれば勝てると信じて。」
 2. **C）宣伝文句**: 
    - NG: 「販売者は甘い言葉を使います。」
-   - OK: 「『${akaharaLogic?.C || '誰でも月収100万'}』という広告を見るたび、僕の心は踊りました。完全に洗脳されていたのです。」
+   - OK: 「『誰でも月収100万』という広告を見るたび、僕の心は踊りました。完全に洗脳されていたのです。」
 3. **G）市場の歪み（真実）**: 
    - NG: 「市場は供給過多です。」
-   - OK: 「ある日、気づいてしまったのです。『${akaharaLogic?.G || '市場の歪み'}』という現実に。」
+   - OK: 「ある日、気づいてしまったのです。僕と同じような『量産型編集者』が、既に何万人もいることに。」
 
 **「一般論」や「客観的な分析」は禁止です。全て「僕の体験」として語ってください。**
 
@@ -105,15 +104,11 @@ H3見出し数: ${seoCriteria.targetH3Count}個以上
 【構成作成のルール】
 1. **重要: H2見出しを必ず使用すること。** 記事の大きな区切りは必ずH2（##）とし、その中の小見出しとしてH3（###）を使用する階層構造にすること。H2なしでH3だけを並べるのは禁止。
 2. **記事タイトル**: テーマをそのまま使うのではなく、SEOキーワードを含み、かつ読者がクリックしたくなる魅力的なタイトル（32文字前後推奨）を作成すること。
-3. **見出しのクリエイティブ化（重要）**:
-   - 「第1章：なぜ...」や「A. 表面的解決策」といった**無機質なラベルをそのまま見出しにすることは絶対禁止**です。
-   - その章の内容を端的に、かつ感情的に表す**「キャッチーな見出し」**に変換してください。
-   - 例: NG「第1章：問題提起」 → OK「なぜ、あなたの努力は全て無駄になるのか？」
-4. H2見出しが足りない場合は、上記の6章構成の中で、特に「第3章（構造）」や「第5章（手段）」を詳しく掘り下げてセクションを増やしてください。
-5. **キーワード配分**: 各セクションでどのキーワードを何回使うかを計画すること。**SEO対策のため、競合の2倍の密度を目指します。**
-6. 結論キーワードは、最後のまとめやオファーへの誘導でのみ使用し、ノウハウとしては語らないこと。
-${remarks ? `7. 備考欄の指示（${remarks}）がある場合は、それを最優先で反映すること。` : ''}
-${offer ? `8. オファー（${offer}）への誘導を最終的なゴールとすること。` : ''}
+3. H2見出しが足りない場合は、上記の6章構成の中で、特に「第3章（構造）」や「第5章（手段）」を詳しく掘り下げてセクションを増やしてください。
+4. **キーワード配分**: 各セクションでどのキーワードを何回使うかを計画すること。**SEO対策のため、競合の2倍の密度を目指します。**
+5. 結論キーワードは、最後のまとめやオファーへの誘導でのみ使用し、ノウハウとしては語らないこと。
+${remarks ? `6. 備考欄の指示（${remarks}）がある場合は、それを最優先で反映すること。` : ''}
+${offer ? `7. オファー（${offer}）への誘導を最終的なゴールとすること。` : ''}
 
 【出力フォーマット】
 以下の形式で出力してください。JSON形式ではありません。
@@ -168,11 +163,10 @@ export function getStructureSystemPromptLocal(
   ragContext: string,
   writerPersonaDescription: string,
   remarks?: string,
-  offer?: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  offer?: string
 ): string {
   // Local LLM version: Stricter formatting rules
-  return getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer, akaharaLogic) + `
+  return getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer) + `
   
 【ローカルLLM専用の追加指示】
 1. **Markdown形式の厳守**: 見出しは必ず「## 見出し名」「### 見出し名」の形式で出力してください。「1. 見出し」「(1) 見出し」のような番号付きリストは**絶対禁止**です。
@@ -191,27 +185,12 @@ export function getWritingSystemPrompt(
   lengthInstruction: string,
   isFirstSection: boolean,
   structure: string,
-  previousContext: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  previousContext: string
 ): string {
   return `あなたは${authorName}として、SEO記事の執筆を行っています。
 現在、全${totalSections}セクション中の第${sectionIndex + 1}セクションを執筆中です。
 
 ${personaInstructions}
-
-${akaharaLogic ? `
-【記事の裏にある論理構造（赤原ロジック）】
-この記事は以下の論理で構成されています。今書いているセクションがどのパートに該当するかを意識し、この定義からブレないようにしてください。
-
-A（表面的解決策）: ${akaharaLogic.A}
-B（相手の動機）: ${akaharaLogic.B}
-C（宣伝文句）: ${akaharaLogic.C}
-D（市場の顧客の問題）: ${akaharaLogic.D}
-E（市場の問題点）: ${akaharaLogic.E}
-F（販売者の問題点）: ${akaharaLogic.F}
-G（市場の歪み・真実）: ${akaharaLogic.G}
-H（本質的改善策・唯一の希望）: ${akaharaLogic.H}
-` : ''}
 
 **【絶対禁止スタンス：先生・教育者】**
 - 「〜について解説します」「〜を学びましょう」は**絶対禁止**です。
@@ -338,8 +317,7 @@ export function getWritingSystemPromptLocal(
   lengthInstruction: string,
   isFirstSection: boolean,
   structure: string,
-  previousContext: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  previousContext: string
 ): string {
   // Local LLM version: Stronger Desu/Masu enforcement
   return getWritingSystemPrompt(
@@ -352,8 +330,7 @@ export function getWritingSystemPromptLocal(
     lengthInstruction,
     isFirstSection,
     structure,
-    previousContext,
-    akaharaLogic
+    previousContext
   ) + `
   
 【ローカルLLM専用の絶対遵守ルール】
@@ -372,3 +349,4 @@ export function getWritingSystemPromptLocal(
    - <think>タグや思考プロセスを出力しないでください。記事本文のみを出力してください。
 `;
 }
+

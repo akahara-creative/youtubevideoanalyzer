@@ -1,5 +1,5 @@
 import { getSeoArticleJobById, updateSeoArticleJob } from "./db";
-import { separateKeywords, generateSearchKeywords, analyzeTopArticles, extractPainPoints, generateStoryKeywords, generateOfferBridge, generateAkaharaLogic, createSEOCriteria, createArticleStructure, generateSEOArticle, checkArticleQuality } from "./seoArticleGenerator";
+import { separateKeywords, generateSearchKeywords, analyzeTopArticles, extractPainPoints, generateStoryKeywords, generateOfferBridge, createSEOCriteria, createArticleStructure, generateSEOArticle, checkArticleQuality } from "./seoArticleGenerator";
 import { saveToRAGWithTags } from "./ragWithTags";
 import { getDb } from "./db";
 import { ragDocuments, tags } from "../drizzle/schema";
@@ -57,66 +57,31 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     
     // Step 3: Analyze top articles
     console.log(`[SEO Job ${jobId}] Step 3: Analyzing top articles...`);
-    let allAnalyses: any[] = [];
-    
-    // Resume Check for Step 3
-    if (job.analyses) {
+    const allAnalyses: any[] = [];
+    for (let i = 0; i < keywords.length; i++) {
+      const keyword = keywords[i];
+      console.log(`[SEO Job ${jobId}] Analyzing keyword ${i + 1}/${keywords.length}: ${keyword}`);
       try {
-        const parsedAnalyses = JSON.parse(job.analyses);
-        if (Array.isArray(parsedAnalyses) && parsedAnalyses.length > 0) {
-          console.log(`[SEO Job ${jobId}] Step 3: Using existing analyses (${parsedAnalyses.length} articles)`);
-          allAnalyses = parsedAnalyses;
-        }
-      } catch (e) {
-        console.warn(`[SEO Job ${jobId}] Failed to parse existing analyses:`, e);
+        const analyses = await analyzeTopArticles(keyword, keywords);
+        allAnalyses.push(...analyses);
+        
+        // Update progress (20% + 30% * progress through keywords)
+        const keywordProgress = Math.floor(30 * (i + 1) / keywords.length);
+        await updateSeoArticleJob(jobId, {
+          progress: 20 + keywordProgress,
+        });
+      } catch (error) {
+        console.error(`[SEO Job ${jobId}] Error analyzing keyword "${keyword}":`, error);
+        // Continue with other keywords even if one fails
       }
     }
-
-    if (allAnalyses.length === 0) {
-      for (let i = 0; i < keywords.length; i++) {
-        const keyword = keywords[i];
-        console.log(`[SEO Job ${jobId}] Analyzing keyword ${i + 1}/${keywords.length}: ${keyword}`);
-        try {
-          const analyses = await analyzeTopArticles(keyword, keywords, async (message) => {
-            // Calculate granular progress
-            // Base: 20%
-            // Keyword Progress: 30% * (i / keywords.length)
-            // Article Progress: (30% / keywords.length) * (currentArticle / totalArticles)
-            // Since we don't know totalArticles easily here without passing it back, we'll just update the message
-            // and keep the progress bar moving slightly if possible, or just update the text.
-            
-            await updateSeoArticleJob(jobId, {
-              progressDetail: `[キーワード ${i + 1}/${keywords.length}] ${message}`
-            });
-          });
-          allAnalyses.push(...analyses);
-          
-          // Update progress (20% + 30% * progress through keywords)
-          const keywordProgress = Math.floor(30 * (i + 1) / keywords.length);
-          await updateSeoArticleJob(jobId, {
-            progress: 20 + keywordProgress,
-            progressDetail: `キーワード「${keyword}」の分析完了`
-          });
-        } catch (error) {
-          console.error(`[SEO Job ${jobId}] Error analyzing keyword "${keyword}":`, error);
-          // Continue with other keywords even if one fails
-        }
-      }
-      
-      console.log(`[SEO Job ${jobId}] Analyzed ${allAnalyses.length} articles total`);
-      await updateSeoArticleJob(jobId, {
-        analyses: JSON.stringify(allAnalyses),
-        currentStep: 3,
-        progress: 50,
-      });
-    } else {
-      // If we skipped analysis, ensure progress is updated
-      await updateSeoArticleJob(jobId, {
-        currentStep: 3,
-        progress: 50,
-        progressDetail: `既存の分析データを使用（${allAnalyses.length}記事）`
-      });
-    }
+    
+    console.log(`[SEO Job ${jobId}] Analyzed ${allAnalyses.length} articles total`);
+    await updateSeoArticleJob(jobId, {
+      analyses: JSON.stringify(allAnalyses),
+      currentStep: 3,
+      progress: 50,
+    });
 
     // Save competitor articles to RAG
     console.log(`[SEO Job ${jobId}] Saving competitor articles to RAG...`);
@@ -175,14 +140,6 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     console.log(`[SEO Job ${jobId}] Generated ${offerBridge.length} offer bridges`);
     await updateSeoArticleJob(jobId, {
       progress: 55,
-    });
-
-    // Step 3.8: Generate Akahara Logic (A-H)
-    console.log(`[SEO Job ${jobId}] Step 3.8: Generating Akahara Logic...`);
-    const akaharaLogic = await generateAkaharaLogic(job.theme, painPoints, trafficKeywords, conclusionKeywords, job.remarks || undefined);
-    console.log(`[SEO Job ${jobId}] Generated Akahara Logic:`, JSON.stringify(akaharaLogic, null, 2));
-    await updateSeoArticleJob(jobId, {
-      progress: 58,
     });
     
     // Get RAG documents filtered by author name tag
@@ -254,6 +211,7 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
       const ragRoles: Record<number, string> = {
         1856: "【核となる思考OS】読者の感情を抉り取るための「通るオファーのロジック（6章構成）」。単なる解説ではなく、読者の痛みを暴き、共感させるための設計図。",
         4: "【文体・ルールの補強】#1856の感情的アプローチを支えるための、赤原スタイルの基礎ルール。",
+        1896: "【行間の詰め方の事例】「100人中100人が同じ理解をする」ための、徹底的な背景描写と文脈説明のサンプル。読み手の理解の隙間を埋める書き方の手本。",
         1841: "【市場の現実（証拠）】稼げない根本原因（労働収入・競合過多）を論理的に説明するための理論武装資料。"
       };
 
@@ -265,70 +223,43 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
       }).join('\n\n---\n\n') + '\n\n';
     }
     
-    // Competitor context: Fetch ALL, then summarize (Phase 1 of Step 6 logic)
+    // Fetch competitor docs from RAG (Compressed for Step 5)
     let competitorContext = '';
     if (db && competitorDocIds.length > 0) {
       try {
-        // 1. Fetch ALL competitor docs (no limit)
         const competitorDocs = await db.select().from(ragDocuments).where(inArray(ragDocuments.id, competitorDocIds));
-        
-        // 2. Create Raw Context (1000 chars each)
-        const rawCompetitorContext = competitorDocs.map(d => `### 競合記事データ (ID: ${d.id})\n内容要約:\n${d.content.substring(0, 1000)}...\n(以下略)`).join('\n\n---\n\n');
-        console.log(`[SEO Job ${jobId}] Fetched ${competitorDocs.length} competitor docs. Summarizing...`);
-
-        // 3. Summarize into "Competitor Landscape Report" (Phase 1)
-        const { summarizeCompetitorArticles } = await import('./seoArticleGenerator');
-        competitorContext = await summarizeCompetitorArticles(rawCompetitorContext);
-        console.log(`[SEO Job ${jobId}] Competitor summarization completed. Length: ${competitorContext.length}`);
-        
+        // Compress: First 1000 chars (Summary) - ragDocuments has no title
+        competitorContext = competitorDocs.map(d => `### 競合記事データ (ID: ${d.id})\n内容要約:\n${d.content.substring(0, 1000)}...\n(以下略)`).join('\n\n---\n\n');
+        console.log(`[SEO Job ${jobId}] Fetched and compressed ${competitorDocs.length} competitor docs from RAG`);
       } catch (e) {
-        console.error(`[SEO Job ${jobId}] Error fetching/summarizing competitor docs:`, e);
+        console.error(`[SEO Job ${jobId}] Error fetching competitor docs:`, e);
       }
     }
 
     if (competitorContext) {
       ragContext += competitorContext + '\n\n';
-    }
+    } /* else if (allAnalyses && allAnalyses.length > 0) {
+      // Fallback to in-memory analyses if RAG fetch failed
+      // DISABLED: This causes massive context bloat (50k+ chars) which crashes Local LLM
+      ragContext += allAnalyses
+        .map(a => `記事タイトル: ${a.title}\n記事内容: ${a.content || '(内容なし)'} キーワード出現: ${JSON.stringify(a.keywordOccurrences || {})}`)
+        .join('\n\n---\n\n');
+    } */
     
     ragContext += `\n\n### 読者の痛み・報われない希望\n${painPoints.join('\n')}\n\n### 生の声\n${realVoices.join('\n')}\n\n### 苦労したエピソードに繋げやすいキーワード\n${storyKeywords.join('\n')}\n\n### オファーへの橋渡し\n${offerBridge.join('\n')}`;
     // Step 4: Create SEO criteria
     console.log(`[SEO Job ${jobId}] Step 4: Creating SEO criteria...`);
-    let criteria;
-    
-    // Resume Check for Step 4
-    if (job.criteria) {
-      try {
-        const parsedCriteria = JSON.parse(job.criteria);
-        if (parsedCriteria && parsedCriteria.targetKeywords) {
-          console.log(`[SEO Job ${jobId}] Step 4: Using existing criteria`);
-          criteria = parsedCriteria;
-        }
-      } catch (e) {
-        console.warn(`[SEO Job ${jobId}] Failed to parse existing criteria:`, e);
-      }
-    }
-
-    if (!criteria) {
-      criteria = await createSEOCriteria(allAnalyses, job.targetWordCount);
-      console.log(`[SEO Job ${jobId}] Created criteria with ${criteria.targetKeywords.length} keywords`);
-      await updateSeoArticleJob(jobId, {
-        criteria: JSON.stringify(criteria),
-        currentStep: 4,
-        progress: 60,
-      });
-    } else {
-       await updateSeoArticleJob(jobId, {
-        currentStep: 4,
-        progress: 60,
-        progressDetail: `既存のSEO基準を使用`
-      });
-    }
+    const criteria = await createSEOCriteria(allAnalyses, job.targetWordCount);
+    console.log(`[SEO Job ${jobId}] Created criteria with ${criteria.targetKeywords.length} keywords`);
+    await updateSeoArticleJob(jobId, {
+      criteria: JSON.stringify(criteria),
+      currentStep: 4,
+      progress: 60,
+    });
     
     // Step 5: Create article structure (Using Light Persona to save context)
     console.log(`[SEO Job ${jobId}] Step 5: Creating article structure...`);
     
-    // Create Light Persona (Style only, remove heavy Description)
-    // IMPORTANT: Enforce "Polite Reality Check Tone" & "Future Pacing Structure" & "Strict Constraints" here
     // Create Light Persona (Style only, remove heavy Description)
     // IMPORTANT: Enforce "Polite Reality Check Tone" & "Future Pacing Structure" here
     const lightWriterPersona = {
@@ -367,45 +298,39 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
         console.error('Failed to write debug log', e);
       }
       // Pass lightPersonas to avoid context overflow
-      structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, lightPersonas, job.remarks || undefined, job.offer || undefined, akaharaLogic);
+      structureResult = await createArticleStructure(job.theme, criteria, ragContext, job.authorName, painPoints, storyKeywords, offerBridge, conclusionKeywords, lightPersonas, job.remarks || undefined, job.offer || undefined);
       structureMarkdown = structureResult.structure;
-      
-      console.log(`[SEO Job ${jobId}] structureResult:`, JSON.stringify(structureResult));
-    
-      // Sanitize structure: If it looks like JSON, try to extract the inner structure
-      if (structureMarkdown.trim().startsWith('{')) {
-        try {
-          const parsed = JSON.parse(structureMarkdown);
-          if (parsed.structure && typeof parsed.structure === 'string') {
-            console.log(`[SEO Job ${jobId}] Detected nested JSON in structure. Extracting inner structure.`);
-            structureMarkdown = parsed.structure;
-          }
-        } catch (e) {
-          console.warn(`[SEO Job ${jobId}] Failed to parse potential JSON structure:`, e);
-        }
-      }
-      
-      console.log(`[SEO Job ${jobId}] Generated structure length: ${structureMarkdown.length}`);
-      if (structureResult.estimates) {
-        console.log(`[SEO Job ${jobId}] Estimated word count: ${structureResult.estimates.wordCount}`);
-      }
-
-      await updateSeoArticleJob(jobId, {
-        structure: JSON.stringify(structureResult),
-        currentStep: 5,
-        progress: 70,
-      });
-    } else {
-       await updateSeoArticleJob(jobId, {
-        currentStep: 5,
-        progress: 70,
-        progressDetail: `既存の構成案を使用`
-      });
     }
+    
+    console.log(`[SEO Job ${jobId}] structureResult:`, JSON.stringify(structureResult));
+    
+    // Sanitize structure: If it looks like JSON, try to extract the inner structure
+    if (structureMarkdown.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(structureMarkdown);
+        if (parsed.structure && typeof parsed.structure === 'string') {
+          console.log(`[SEO Job ${jobId}] Detected nested JSON in structure. Extracting inner structure.`);
+          structureMarkdown = parsed.structure;
+        }
+      } catch (e) {
+        console.warn(`[SEO Job ${jobId}] Failed to parse potential JSON structure:`, e);
+      }
+    }
+    
+    console.log(`[SEO Job ${jobId}] Generated structure length: ${structureMarkdown.length}`);
+    if (structureResult.estimates) {
+      console.log(`[SEO Job ${jobId}] Estimated word count: ${structureResult.estimates.wordCount}`);
+    }
+
+    await updateSeoArticleJob(jobId, {
+      structure: JSON.stringify(structureResult),
+      currentStep: 5,
+      progress: 70,
+    });
     
     // Step 6: Generate article content
     console.log(`[SEO Job ${jobId}] Step 6: Generating article content...`);
-    const article = await generateSEOArticle(structureMarkdown, criteria, ragContext, job.authorName, conclusionKeywords, generatedPersonas, job.remarks || undefined, job.offer || undefined, akaharaLogic);
+    const article = await generateSEOArticle(structureMarkdown, criteria, ragContext, job.authorName, conclusionKeywords, generatedPersonas, job.remarks || undefined, job.offer || undefined);
     console.log(`[SEO Job ${jobId}] Generated article with ${article.length} characters`);
     await updateSeoArticleJob(jobId, {
       article,
@@ -416,6 +341,7 @@ export async function processSeoArticleJob(jobId: number): Promise<void> {
     // Step 7: Quality check & Refinement
     console.log(`[SEO Job ${jobId}] Step 7: Checking and refining article quality...`);
     
+    // Refine with personas first
     // Refine with personas first
     const { refineArticleWithPersonas } = await import('./seoArticleGenerator');
     const refinedArticle = await refineArticleWithPersonas(article, generatedPersonas, criteria, painPoints);
@@ -625,3 +551,5 @@ ${analysis.content}
   
   return savedDocIds;
 }
+
+

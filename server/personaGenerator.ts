@@ -105,11 +105,18 @@ export async function generateWriterPersona(): Promise<WriterPersona> {
   if (!db) throw new Error("Database connection failed");
 
   // Fetch documents tagged with "赤原" (Akahara)
-  // We want to capture "Voice/Tone" here.
-  // We EXCLUDE "Logic/Structure" docs (#1856, #1896, #1841) because they are already in the main ragContext.
-  // This prevents duplication and allows us to pack more "Voice Samples" (#4, #7, #8, etc.) into the context limit.
   const akaharaTags = await db.select().from(tags).where(eq(tags.displayName, "赤原"));
   let context = "";
+  let voiceDocs: { content: string; id: number; type: string }[] = [];
+
+  // Helper to strip HTML and junk
+  const cleanContent = (text: string) => {
+    return text
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/━━　MyASP[\s\S]*/, '') // Remove MyASP footer
+      .replace(/Copyright[\s\S]*/, '') // Remove Copyright
+      .trim();
+  };
 
   if (akaharaTags.length > 0) {
     const tagId = akaharaTags[0].id;
@@ -125,9 +132,11 @@ export async function generateWriterPersona(): Promise<WriterPersona> {
 
     // Filter out Logic docs to avoid duplication with ragContext
     // And exclude 'seo_article' type (we only want raw voice samples)
-    const voiceDocs = docs.filter(d => 
-      ![1856, 1896, 1841].includes(d.id) && 
-      d.type !== 'seo_article' // Assuming type is fetched
+    // Updated: Exclude #2622 (New Logic/Style Doc) instead of #1896
+    const excludedIds = [1856, 1841, 2622];
+    voiceDocs = docs.filter(d => 
+      !excludedIds.includes(d.id) && 
+      d.type !== 'seo_article'
     );
     
     // Prioritize specific Voice Samples: #8 (Confession), #7 (YinYang), #4 (Karma)
@@ -141,20 +150,9 @@ export async function generateWriterPersona(): Promise<WriterPersona> {
       return 0; // Keep original order
     });
 
-    // Helper to strip HTML and junk
-    const cleanContent = (text: string) => {
-      return text
-        .replace(/<[^>]*>/g, '') // Remove HTML tags
-        .replace(/━━　MyASP[\s\S]*/, '') // Remove MyASP footer
-        .replace(/Copyright[\s\S]*/, '') // Remove Copyright
-        .trim();
-    };
-
-    // Take top 10 Voice docs, but ensure we fit the most important ones
+    // Take top 10 Voice docs
     context = voiceDocs.slice(0, 10).map(d => {
       let content = cleanContent(d.content);
-      // Truncate individual docs if too long (e.g. #8 is 25k)
-      // We want to keep the BEGINNING of #8 (Confession)
       if (content.length > 5000) {
         content = content.substring(0, 5000) + "\n...(truncated)...";
       }
@@ -172,19 +170,82 @@ export async function generateWriterPersona(): Promise<WriterPersona> {
     `;
   }
 
-  return {
-    name: "赤原",
-    style: "赤原スタイル（告発者・共犯者・高解像度）",
-    tone: "親しみやすいが、プロフェッショナルとしての自信がある。「僕」という一人称。",
-    description: `【赤原の思考OS】
-私はRAG #1856（市場分析ロジック）と #1896（行間の詰め方）を完璧にインストールした専門家です。
+  // --- COMPRESSION LOGIC (For Low-Spec Environments) ---
+  const USE_COMPRESSED_PERSONA = true; // Set to false when hardware improves (e.g. PC upgrade)
+  
+  let finalDescription = "";
+  
+  if (USE_COMPRESSED_PERSONA) {
+    console.log('[generateWriterPersona] Compressing persona description...');
+    const compressionPrompt = `
+あなたはプロの編集者です。
+以下の「赤原の口調サンプル（大量のテキスト）」を分析し、**「赤原スタイルの執筆ルール（スタイルガイド）」**を作成してください。
+
+【目的】
+このスタイルガイドをAIに読み込ませることで、元のテキストがなくても「赤原の口調・文体・思考回路」を完全に再現できるようにする。
+
+【要件】
+1. **文体ルール**: 語尾は必ず「〜です」「〜ます」調（敬体）とすること。「〜だ」「〜である」は禁止。ただし、態度は断定的で強いものとする。
+2. **特徴的な語彙**: 赤原が頻繁に使うキーワード（「搾取」「洗脳」「思考停止」など）や、独特の言い回しをリストアップする。
+3. **禁止事項**: 赤原が絶対に使わない言葉（「〜だと思います」「〜かもしれません」などの弱気な表現）を定義する。
+4. **思考パターン**: 読者に対するスタンス（共犯者、告発者）や、論理展開の癖（A→C→G）を言語化する。
+5. **出力文字数**: **3000文字以内**に濃縮する。
+
+【入力テキスト（口調サンプル）】
+${context.substring(0, 15000)}
+`;
+
+    const compressionResponse = await invokeLLM({
+      messages: [{ role: "user", content: compressionPrompt }],
+      temperature: 0.5, // Low temp for accurate summarization
+      max_tokens: 4000
+    });
+    
+    const summary = compressionResponse.choices[0].message.content || "";
+
+    // Append Raw Voice Samples (Hybrid Approach)
+    // We append snippets from the top 3 voice docs to give the LLM "flavor" to mimic,
+    // complementing the abstract rules in the Style Guide.
+    const topVoiceDocs = voiceDocs.slice(0, 3);
+    let rawSamples = "";
+    if (topVoiceDocs.length > 0) {
+      rawSamples = "\n\n### 赤原の生の声（Voice Samples - Mimic This Tone）\n" + 
+        topVoiceDocs.map(d => {
+          const clean = cleanContent(d.content);
+          // Take a substantial snippet (800 chars) to capture rhythm and vocabulary
+          const snippet = clean.length > 800 ? clean.substring(0, 800) + "..." : clean;
+          return `#### Sample from RAG #${d.id}\n${snippet}`;
+        }).join("\n\n");
+    }
+
+    finalDescription = `
+【赤原の思考OS（圧縮版 + 生サンプル）】
+私はRAG #1856（市場分析ロジック）と #2622（行間の詰め方）をインストールした専門家です。
+
+【赤原スタイルガイド（口調・文体のルール）】
+${summary}
+
+${rawSamples}
+    `.trim();
+
+  } else {
+    // Original Full Logic
+    finalDescription = `【赤原の思考OS】
+私はRAG #1856（市場分析ロジック）と #2622（行間の詰め方）を完璧にインストールした専門家です。
 市場の歪み（A-C-G）を熟知しており、読者がなぜ稼げないのかを論理的に説明できます。
 
 【赤原の口調・文体（Voice）】
 以下は私の話し方のサンプルです。このトーンを完全に再現してください。
 特に RAG #8（告白）の「弱さをさらけ出す姿勢」と、RAG #4（因果応報）の「断定的な語り口」を融合させてください。
 
-${context.substring(0, 12000)}` // Limit to 12k to avoid context overflow
+${context.substring(0, 12000)}`;
+  }
+
+  return {
+    name: "赤原",
+    style: "赤原スタイル（告発者・共犯者・高解像度）",
+    tone: "親しみやすいが、プロフェッショナルとしての自信がある。「僕」という一人称。",
+    description: finalDescription
   };
 }
 

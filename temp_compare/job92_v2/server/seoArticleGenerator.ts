@@ -25,7 +25,6 @@ export interface SEOArticleRequest {
   theme: string;
   keywords: string[];
   ragContext: string;
-  remarks?: string;
 }
 
 export interface ArticleAnalysis {
@@ -39,10 +38,7 @@ export interface ArticleAnalysis {
   relatedOccurrences: Array<{ related: string; count: number; positions: number[] }>;
   strategy?: string;
   specialNotes?: string;
-  content?: string; // Added content field
 }
-
-
 
 export interface SEOCriteria {
   targetWordCount: number;
@@ -141,11 +137,7 @@ export async function generateSearchKeywords(trafficKeywords: string[]): Promise
  * ステップ3: 上位10記事の分析
  * 検索ワードごとに上位10記事を分析
  */
-export async function analyzeTopArticles(
-  keyword: string, 
-  allKeywords: string[],
-  onProgress?: (message: string) => Promise<void>
-): Promise<ArticleAnalysis[]> {
+export async function analyzeTopArticles(keyword: string, allKeywords: string[]): Promise<ArticleAnalysis[]> {
   const { searchGoogle, scrapeArticle } = await import('./scraper');
   
   console.log(`[SEO記事分析] キーワード「${keyword}」の上位記事を検索中...`);
@@ -162,12 +154,8 @@ export async function analyzeTopArticles(
   const analyses: ArticleAnalysis[] = [];
   
   // 2. 各記事をスクレイピングして分析
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
+  for (const url of urls) {
     try {
-      if (onProgress) {
-        await onProgress(`記事分析中 (${i + 1}/${urls.length}): ${url}`);
-      }
       // スクレイピング実行
       const scrapedData = await scrapeArticle(url);
       
@@ -726,8 +714,7 @@ export async function createArticleStructure(
   conclusionKeywords: string[] = [],
   generatedPersonas: GeneratedPersonas,
   remarks?: string,
-  offer?: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  offer?: string
 ): Promise<{ structure: string; estimates: { wordCount: number; h2Count: number; h3Count: number; keywordCounts: Record<string, number> } }> {
   // conclusionKeywordsが空配列の場合のデフォルト値
   const safeConclusion = conclusionKeywords.length > 0 ? conclusionKeywords : ['結論キーワード'];
@@ -753,8 +740,8 @@ export async function createArticleStructure(
       {
         role: "system",
         content: process.env.USE_OLLAMA === 'true' 
-          ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer, akaharaLogic)
-          : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer, akaharaLogic)
+          ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
+          : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
       },
       {
         role: "user",
@@ -790,26 +777,17 @@ ${offer ? `\nオファー（ゴール）: ${offer}` : ''}
         content: `あなたは「利己的で短気な読者（ペルソナ）」です。
 提示された記事構成を見て、**「自分の悩みが解決しそうか？」「読み進めたいと思うか？」**を厳しく判定してください。
 
-【あなたの特徴（ペルソナ）】
-${generatedPersonas?.target ? `
-特徴: ${generatedPersonas.target.characteristics}
-現在の苦悩: ${generatedPersonas.target.struggles}
-市場への怒り: ${generatedPersonas.target.frustrations}
-**離脱ポイント（絶対に許せないこと）: ${generatedPersonas.target.rejectionCriteria}**
-` : ''}
-
-【あなたの判断基準（これがあったら即離脱）】
-1. **「解決策（仕組み化・ステップメール等）」について説教されていないか？**
-   - 「簡単に稼げると思うな」「仕組み化は大変だ」などと、**解決策に対してハードルを上げられたり、説教されたりしたら、即座に「読みたくない」と拒絶してください。**
-   - 読者は「救い」を求めています。解決策は「希望（天国）」でなければなりません。
-2. **「俺の悩み」から始まっているか？**
+【あなたの判断基準】
+1. **「俺の悩み」から始まっているか？**
    - いきなり「労働収入はダメだ」とか説教されていないか？
    - 「英語が話せるようになりたい」「動画編集で稼ぎたい」という**俺の顕在的欲求（ウォンツ）**に寄り添っているか？
-3. **「なぜ俺が失敗したのか」が納得できるか？**
+2. **「なぜ俺が失敗したのか」が納得できるか？**
    - 単なる精神論ではなく、「市場の構造（A→C→G）」を使って、俺が騙されていた理由を論理的に説明してくれているか？
+3. **「希望」が見えるか？**
+   - 絶望させるだけじゃなく、「こうすれば勝てる（H）」という光を見せてくれているか？
 
 【出力形式】
-ダメ出しがある場合は、具体的に「ここで説教されているから読みたくない」「解決策が難しそうで嫌だ」と指摘してください。
+ダメ出しがある場合は、具体的に「ここは読みたくない」「ここは意味がわからない」と指摘してください。
 完璧なら「修正なし」と答えてください。`
       },
       {
@@ -837,18 +815,18 @@ ${content}`
 提示された記事構成を、**「一つの作品（読み物）」としての完成度**で厳しく判定してください。
 
 【あなたの判断基準】
-1. **作品としての「熱」と「没入感」**
+1. **作品としての「熱」があるか？**
    - 単なる情報の羅列（解説記事）になっていないか？
-   - 読者が冒頭から引き込まれ、最後まで一気に読ませる「ドラマ」や「カタルシス」が設計されているか？
-2. **論理の完全性（行間の繋がり）**
-   - **「100人中100人が同じ理解」**をできるか？論理の飛躍（説明不足の行間）はないか？
+   - 読者の感情を揺さぶる「ドラマ」や「カタルシス」が設計されているか？
+2. **論理の整合性（A→C→G→H）**
    - 導入の「悩み」から、結論の「解決策」まで、論理が一本の線で繋がっているか？
+   - 途中で話が脱線したり、矛盾したりしていないか？
 3. **赤原としての「鋭さ」**
    - 筆者（赤原）のキャラクターが活きているか？
-   - 凡庸な「いい人」や「先生」になっていないか？（毒、棘、共犯者としてのスタンスが必要）
+   - 凡庸な「いい人」になっていないか？（毒や棘が必要）
 
 【出力形式】
-ダメ出しがある場合は、具体的に「第X章の論理が飛躍している」「ここのカタルシスが弱い」と指摘してください。
+ダメ出しがある場合は、具体的に「第X章の展開が弱い」「ここは矛盾している」と指摘してください。
 完璧なら「修正なし」と答えてください。`
       },
       {
@@ -871,8 +849,8 @@ ${content}`
         {
           role: "system",
           content: process.env.USE_OLLAMA === 'true' 
-            ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer, akaharaLogic)
-            : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer, akaharaLogic)
+            ? getStructureSystemPromptLocal(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
+            : getStructureSystemPrompt(authorName, seoCriteria, ragContext, writerPersonaDescription, remarks, offer)
         },
         {
           role: "user",
@@ -967,8 +945,7 @@ export async function generateSEOArticle(
   conclusionKeywords: string[] = [],
   personas?: GeneratedPersonas,
   remarks?: string,
-  offer?: string,
-  akaharaLogic?: { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: string; }
+  offer?: string
 ): Promise<string> {
   // conclusionKeywordsが空配列の場合のデフォルト値
   const safeConclusion = conclusionKeywords.length > 0 ? conclusionKeywords : ['結論キーワード'];
@@ -1021,11 +998,7 @@ export async function generateSEOArticle(
   }
 
   // 各セクションの目標文字数を計算（実際のセクション数で割る）
-  // 全体の目標文字数から、タイトルや見出しの分を除いた「本文」の目標
-  const targetBodyLength = seoCriteria.targetWordCount; 
-  const targetSectionLength = Math.floor(targetBodyLength / sections.length);
-
-  console.log(`[generateSEOArticle] Total sections: ${sections.length}, Target per section: ${targetSectionLength} chars`);
+  const targetSectionLength = Math.floor(seoCriteria.targetWordCount / sections.length);
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
@@ -1065,8 +1038,8 @@ Akaharaスタイルの真骨頂である「圧倒的な具体性」と「泥臭�
     }
 
     const systemPrompt = process.env.USE_OLLAMA === 'true'
-      ? getWritingSystemPromptLocal(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext, akaharaLogic)
-      : getWritingSystemPrompt(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext, akaharaLogic);
+      ? getWritingSystemPromptLocal(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext)
+      : getWritingSystemPrompt(authorName, i, sections.length, personaInstructions, keywordInstructions, targetSectionLength, lengthInstruction, isFirstSection, structure, previousContext);
 
     // Programmatically append the H2 header to ensure correct formatting
     // Ensure section.title has proper markdown (add ## if missing)
@@ -1428,10 +1401,6 @@ export async function generateFullSEOArticle(
   const { offerBridge } = await generateOfferBridge(allPainPoints, storyKeywords, conclusionKeywords, authorName);
   console.log(`[SEO記事生成] 橋渡し: ${offerBridge.length}個`);
 
-  console.log('[SEO記事生成] ステップ3.8: 赤原ロジック生成');
-  const akaharaLogic = await generateAkaharaLogic(request.theme, allPainPoints, trafficKeywords, conclusionKeywords, request.remarks || '');
-  console.log('[SEO記事生成] 赤原ロジック生成完了');
-
   console.log('[SEO記事生成] ステップ4: SEO基準作成');
   const seoCriteria = createSEOCriteria(allAnalyses, targetWordCount);
   console.log(`[SEO記事生成] SEO基準: 文字数${seoCriteria.targetWordCount}, H2:${seoCriteria.targetH2Count}, H3:${seoCriteria.targetH3Count}`);
@@ -1446,16 +1415,13 @@ export async function generateFullSEOArticle(
     storyKeywords,
     offerBridge,
     conclusionKeywords,
-    generatedPersonas,
-    request.remarks,
-    undefined,
-    akaharaLogic
+    generatedPersonas
   );
   const structure = structureResult.structure;
   console.log('[SEO記事生成] 構成作成完了');
 
   console.log('[SEO記事生成] ステップ6: 記事生成');
-  const article = await generateSEOArticle(structure, seoCriteria, request.ragContext, authorName, conclusionKeywords, generatedPersonas, request.remarks, undefined, akaharaLogic);
+  const article = await generateSEOArticle(structure, seoCriteria, request.ragContext, authorName, conclusionKeywords);
   console.log('[SEO記事生成] 記事生成完了');
 
   console.log('[SEO記事生成] ステップ7: 品質チェック');
@@ -1471,10 +1437,8 @@ export async function generateFullSEOArticle(
     seoCriteria
   };
 }
-
 /**
- * ステップ7: 記事の品質チェックとリファイン（Job 92 完全再現版）
- * ペルソナ（編集者・執筆者）を用いて記事をブラッシュアップする
+ * ペルソナを用いた記事の品質チェックと修正（構成作家チェック -> 赤原修正 -> 確認）
  */
 export async function refineArticleWithPersonas(
   article: string,
@@ -1482,7 +1446,7 @@ export async function refineArticleWithPersonas(
   seoCriteria: SEOCriteria,
   painPoints: string[]
 ): Promise<string> {
-  console.log('[refineArticleWithPersonas] Starting persona-based refinement (Job 92 Exact)...');
+  console.log('[refineArticleWithPersonas] Starting persona-based refinement...');
 
   console.log(`[refineArticleWithPersonas] Switching to Chunked Refinement for stability.`);
     
@@ -1632,317 +1596,6 @@ ${personas.writer.style}
   return refinedArticle;
 }
 
-
-/**
- * ペルソナを用いた記事の品質チェックと修正（構成作家チェック -> 赤原修正 -> 確認）
- * @deprecated PCスペック向上後に使用することを推奨（コンテキスト消費大）
- */
-export async function refineArticleWithPersonasEnhanced(
-  article: string,
-  personas: GeneratedPersonas,
-  seoCriteria: SEOCriteria,
-  painPoints: string[]
-): Promise<string> {
-  console.log('[refineArticleWithPersonas] Starting persona-based refinement...');
-
-  console.log(`[refineArticleWithPersonas] Switching to Chunked Refinement for stability.`);
-    
-  const sections = parseStructure(article);
-  let refinedArticle = "";
-  
-  // タイトル（H1）があれば最初に追加（リライト対象外）
-  const titleMatch = article.match(/^#\s+(.+)$/m);
-  if (titleMatch) {
-    refinedArticle += `# ${titleMatch[1]}\n\n`;
-  }
-
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-    // Skip empty sections
-    if (!section.title && !section.content.trim()) continue;
-
-    const sectionText = section.title ? `${section.title}\n${section.content}` : section.content;
-    console.log(`[refineArticleWithPersonas] Refining section ${i + 1}/${sections.length}...`);
-
-    // 優先キーワード（出現回数が多い上位5つ）を抽出
-    const priorityKeywords = seoCriteria.targetKeywords
-      .sort((a, b) => b.minCount - a.minCount)
-      .slice(0, 5)
-      .map(k => k.keyword)
-      .join(', ');
-
-    // 1. 読者ペルソナによるチェック（セクション単位＋全体整合性）
-    // 過去の文脈を要約して渡す（トークン節約のため、直近のセクションと、それ以前の要約を渡すのが理想だが、
-    // ここでは簡易的に「これまでの構成タイトル」と「直前のセクション」を渡す）
-    
-    const previousTitles = sections.slice(0, i).map(s => s.title).join('\n');
-    const nextTitles = sections.slice(i + 1).map(s => s.title).join('\n');
-    
-    // 直前のセクションの本文（最大1000文字）を取得して文脈とする
-    const previousContext = refinedArticle.slice(-1000);
-
-    const editorCheckPrompt = `
-あなたは「利己的で短気な読者（ペルソナ）」です。
-以下の記事セクションを読んで、**「自分の役に立つか？」「読み進めたいと思うか？」**を厳しく判定してください。
-また、**「前の章と同じことを言っていないか（重複）」**も厳しくチェックしてください。
-
-【あなたの特徴】
-- 悩み：${painPoints.join('、')}
-- 性格：自分勝手、結論を急ぐ、説教されるのが嫌い、難しい話（ノウハウ）は大嫌い
-- 状態：労働収入の罠にハマっているが、自分では気づいていない
-
-【記事の全体構成（現在地：${i + 1}/${sections.length}）】
-[済] ${previousTitles}
-[今] ${section.title}
-[未] ${nextTitles}
-
-【直前の文脈（ここから繋がっている）】
-...${previousContext}
-
-【チェック対象セクション】
-${sectionText}
-
-【判定基準（違反があれば即修正指示）】
-1. **重複の徹底排除（最重要）**
-   - 「これ、さっきも聞いたぞ？」と思ったら即アウト。
-   - 特に「導入部」で話したことを第1章で繰り返していたら即削除。
-
-2. **「ノウハウ・勉強」の禁止（絶対）**
-   - 「ステップメールとは」「仕組みとは」みたいな**機能説明**があったら、「難しそうだから読みたくない」と拒絶しろ。
-   - 「勉強が必要です」「努力が必要です」と言われたら、「じゃあいいや」と拒絶しろ。
-   - **「テンプレート」という言葉があったら、「安っぽい」と吐き捨てろ。**
-
-3. **口調警察（絶対遵守）**
-   - **「お前」** → 「あなた」に直せ。
-   - **「〜だ・〜である」** → 「〜です・〜ます」に直せ。
-   - ただし、態度は「上から目線」「毒舌」を維持しろ。単なるいい子ちゃん言葉はNG。
-
-4. **「先生ヅラ」していないか？**
-   - 「〜について解説します」「〜を学びましょう」なんて言われたら、俺は即座にブラウザを閉じる。
-   - 「教える」のではなく、「業界の嘘を暴く」「俺の失敗の原因を言い当てる」スタンスになっているか？
-
-5. **「俺のメリット」があるか？**
-   - 筆者の苦労話ばかりで、俺に何の得があるのか不明ではないか？
-   - 「これを読めば（やれば）楽になれる」という**救い**が提示されているか？
-
-【判定出力形式】
-問題がない場合:
-修正なし
-
-問題がある場合（該当する問題点のみ列挙せよ）:
-[問題点1]
-箇所: "..."（問題のある具体的な文言を引用）
-理由: 重複している / ノウハウを語っている / 口調が変 / テンプレートと言っている
-指示: 削除せよ / "..."という表現に書き換えろ
-
-[問題点2]
-...
-`;
-
-    const checkResponse = await invokeLLM({
-      messages: [{ role: "user", content: editorCheckPrompt }]
-    });
-    
-    const checkResult = typeof checkResponse.choices[0].message.content === 'string' 
-      ? checkResponse.choices[0].message.content 
-      : "";
-
-    if (checkResult.includes("修正なし")) {
-      refinedArticle += sectionText + "\n\n";
-      continue;
-    }
-
-    // 2. 赤原による修正（セクション単位）
-    // 重要: ここで personas.writer.description (RAG Voice Samples) を渡さないと、
-    // LLMは「赤原の口調」を忘れてしまい、一般的な丁寧語やカタコトになってしまう。
-    const writerFixPrompt = `
-あなたは「${personas.writer.name}」です。
-以下の「赤原の思考OS」と「口調サンプル」を完全にインストールしています。
-
-${personas.writer.description}
-
-読者（ペルソナ）から以下の指摘を受けました。
-
-【読者の指摘】
-${checkResult}
-
-【優先SEOキーワード（必ず含めること）】
-${priorityKeywords}
-
-【修正対象セクション本文】
-${section.content}
-
-【指示】
-元のセクションをベースに、**指摘された箇所のみ**を修正した新しいセクションを作成してください。
-指摘されていない部分は、元の表現（赤原スタイル）を極力維持してください。
-ただし、修正箇所と前後の文脈が自然につながるように調整してください。
-
-【禁止事項（再確認）】
-- ノウハウ（機能説明）は書かない
-- テンプレートという言葉は使わない
-- 努力・勉強を強要しない
-- 「お前」は使わず「あなた」を使う
-- 「〜だ・〜である」ではなく「〜です・〜ます」を使う（ただし毒舌・断定は維持）
-
-【出力形式】
-修正後の**本文のみ**を出力してください（見出しやコードブロックは不要）。
-`;
-
-
-    const fixResponse = await invokeLLM({
-      messages: [{ role: "user", content: writerFixPrompt }]
-    });
-
-    const fixedContent = typeof fixResponse.choices[0].message.content === 'string'
-      ? fixResponse.choices[0].message.content
-      : "";
-      
-    if (!fixedContent) {
-      console.error('[refineArticleWithPersonas] Failed to generate fixed article for section. Reverting to original section.');
-      refinedArticle += sectionText + "\n\n";
-      continue;
-    }
-
-    // 安全装置: 修正後の文章が極端に短い（元の50%未満）場合は、途切れとみなして元に戻す
-    if (fixedContent.length < section.content.length * 0.5) {
-      console.warn(`[refineArticleWithPersonas] Fixed content for section is too short (${fixedContent.length} chars vs ${section.content.length} chars). Discarding fix to prevent truncation.`);
-      refinedArticle += sectionText + "\n\n";
-    } else {
-      // 見出しを復元して追加（必ず改行を2つ入れる）
-      // 正規表現で末尾の改行を確認し、不足していれば追加する
-      const cleanFixedContent = fixedContent.trim();
-      refinedArticle += section.title ? `\n\n${section.title}\n${cleanFixedContent}\n\n` : `${cleanFixedContent}\n\n`;
-    }
-  }
-
-  return refinedArticle;
-}
-
-
-/**
- * ステップ3.8: 赤原ロジック（A-H）の生成
- * 
- * 市場の破綻の構図（A-H）を明確に定義する。
- * H（本質的改善策）は必ず「資産形成力（仕組み化）」に帰結させる。
- */
-export async function generateAkaharaLogic(
-  theme: string,
-  painPoints: string[],
-  trafficKeywords: string[],
-  conclusionKeywords: string[],
-  remarks?: string
-): Promise<{
-  A: string; // 表面的解決策
-  B: string; // 相手の動機
-  C: string; // 販売者の宣伝文句
-  D: string; // 市場の顧客の問題
-  E: string; // 市場の問題点
-  F: string; // 販売者の問題点
-  G: string; // 市場の歪み・問題点
-  H: string; // 本質的改善策
-}> {
-  const response = await invokeLLM({
-    messages: [
-      {
-        role: "system",
-        content: `あなたは市場分析のプロフェッショナルです。
-以下のテーマについて、「市場の破綻の構図（A〜H）」を定義してください。
-
-【重要：思考プロセス】
-以下の「2つの参考事例」から共通する**「論理構造（フレームワーク）」**を抽出し、**今回指定されたテーマ**に当てはめてA〜Hを定義してください。
-
-**【共通する論理構造（A〜Hの定義）】**
-*   **A（表面的解決策）**: その市場で流行っている、誰もが飛びつく安易なノウハウ。
-*   **B（相手の動機）**: 顧客がそれを求める動機。多くの場合「楽したい」「現状から逃げたい」という安易な欲求。
-*   **C（販売者の宣伝文句）**: Bの欲求を刺激する甘い言葉。「誰でも」「簡単に」「すぐに」など。
-*   **D（市場の顧客の問題）**: 顧客自身が抱える本質的な欠陥。努力を嫌う、思考停止、依存心など。
-*   **E（市場の問題点）**: Dの欠陥を見透かした上で、本質的解決ではなく「その場しのぎ」を高額で売っていること。
-*   **F（販売者の問題点）**: なぜEのようなことをするのか？ それは販売者自身が**「ただのコピービジネス」**であり、本質を語る能力がない、あるいは**「保身（売れればいい）」**に走っているからである。
-*   **G（市場の歪み）**: その市場では「本質的な力（H）」が提供されず、消費者が永遠に搾取される構造になっていること。
-*   **H（本質的改善策）**: その業界・その市場が語らない、むしろ隠されていると言っても過言ではない、その業界での最大幸福を得るための**「本質的な力（一生モノの力）」**を定義する。
-    *   英語市場なら「洞察力」が本質。
-    *   稼ぐ系市場なら「仕組み化」が本質。
-    *   **A〜Gの全ては、この「本質的な力」から目を背けた結果として起こっている。**
-    *   業界は読者が目を背けていることをいいことに、つけ上がっている。これを全て暴き、本当の解決策（H）を提示するのが赤原スタイルである。
-
-【参考事例1：英語市場】
-A）表面的解決策：単語、フレーズ、文法、暗記
-B）相手の動機：サラリーマンで昇進するため、就職のため
-C）販売者の宣伝文句：「単語を覚えてペラペラになろう」
-D）市場の顧客の問題：本質的には外国人と仲良くなりたいわけじゃない。
-E）市場の問題点：対人関係の問題なのに「記憶術」を売っている。
-F）販売者の問題点：保身。コピービジネス。
-G）市場の歪み：「頭が真っ白になる」人への本質的解決策（資産）がない。
-H）本質的改善策：**「洞察力」（興味がない人とも仲良くなれる力＝一生モノの力）**
-
-【参考事例2：動画編集・SNSマーケ市場】
-A）表面的解決策：案件をこなす単純作業
-B）相手の動機：人生が辛い、楽したい
-C）販売者の宣伝文句：「動画編集で稼ごう、自由になろう」
-D）市場の顧客の問題：努力したくない、思考停止。
-E）市場の問題点：労働案件（飼い殺し）を高額で売っている。
-F）販売者の問題点：デスレースを是としている。
-G）市場の歪み：「資産形成力（未来を担保する力）」がない。
-H）本質的改善策：**「仕組み化」（自分の人生を担保する力＝一生モノの力）**
-
-【指示】
-上記の構造を応用し、**今回指定されたテーマ**におけるA〜Hを定義してください。
-**Hは、その業界が隠している「本質的な力（一生モノの力）」を定義してください。**
-
-**【重要：備考欄の反映】**
-ユーザーからの備考欄（remarks）に、H（解決策）に関する指示がある場合は、**それを最優先で反映してください。**
-
-以下のJSON形式で返してください：
-{
-  "A": "...",
-  "B": "...",
-  "C": "...",
-  "D": "...",
-  "E": "...",
-  "F": "...",
-  "G": "...",
-  "H": "..."
-}`
-      },
-      {
-        role: "user",
-        content: `テーマ: ${theme}
-集客源キーワード: ${trafficKeywords.join(', ')}
-読者の悩み: ${painPoints.join(', ')}
-備考: ${remarks || 'なし'}
-
-このテーマにおける市場の破綻の構図（A〜H）を作成してください。`
-      }
-    ],
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        name: "akahara_logic_generation",
-        strict: true,
-        schema: {
-          type: "object",
-          properties: {
-            A: { type: "string" },
-            B: { type: "string" },
-            C: { type: "string" },
-            D: { type: "string" },
-            E: { type: "string" },
-            F: { type: "string" },
-            G: { type: "string" },
-            H: { type: "string" }
-          },
-          required: ["A", "B", "C", "D", "E", "F", "G", "H"],
-          additionalProperties: false
-        }
-      }
-    }
-  });
-
-  const content = response.choices[0].message.content as string;
-  const result = JSON.parse(content);
-  return result;
-}
-
 function parseStructure(md: string) {
   const lines = md.split('\n');
   const sections: { title: string; content: string }[] = [];
@@ -1969,50 +1622,4 @@ function parseStructure(md: string) {
     sections.push({ title: currentTitle, content: currentContent.join('\n') });
   }
   return sections;
-}
-
-/**
- * 競合記事の要約を生成する（コンテキスト節約のため）
- * @param rawCompetitorContext 生の競合記事コンテキスト（全件）
- */
-export async function summarizeCompetitorArticles(rawCompetitorContext: string): Promise<string> {
-  const prompt = `
-あなたは優秀な編集者です。以下の「競合記事の要約リスト」を分析し、全体としての傾向をまとめた「競合分析レポート」を作成してください。
-
-【目的】
-これから執筆する記事（赤原スタイル）で、競合と差別化するため、また競合がどのようなエピソードや論理を展開しているかを把握するために使用します。
-
-【入力データ】
-${rawCompetitorContext}
-
-【指示】
-以下の項目について、4000文字程度で詳細にまとめてください。
-1. **共通する主張・ノウハウ**: 競合がこぞって言っている「正解」は何か？（例：とにかく継続しろ、SEOが大事、など）
-2. **よくあるエピソード・具体例（最重要）**: 競合が使っている事例やストーリーはどのようなものか？可能な限り具体的に、数を多く抽出してください。
-3. **文体・トーン**: どのような語り口が多いか？（例：教科書的、煽り系、寄り添い系）
-4. **構造のパターン**: どのような章立てが多いか？
-
-【出力形式】
-Markdown形式で出力してください。
-`;
-
-  try {
-    const result = await invokeLLM({
-      messages: [
-        { role: "system", content: "あなたは分析のプロです。" },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.3, // Analytical, so lower temperature
-    });
-    
-    const content = typeof result.choices[0].message.content === 'string' 
-      ? result.choices[0].message.content 
-      : "";
-      
-    return `### 競合記事分析レポート\n\n${content}`;
-  } catch (error) {
-    console.error("Failed to summarize competitor articles:", error);
-    // 失敗した場合は、最初の3000文字だけ返す（安全策）
-    return `### 競合記事データ（要約失敗のため抜粋）\n\n${rawCompetitorContext.substring(0, 3000)}...`;
-  }
 }

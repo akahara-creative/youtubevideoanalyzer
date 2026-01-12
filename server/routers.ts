@@ -1629,14 +1629,41 @@ ${ragContext}`
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
         
         // Verify ownership
-        const [article] = await db.select().from(seoArticles)
-          .where(eq(seoArticles.id, input.id));
+        const [job] = await db.select().from(seoArticleJobs)
+          .where(eq(seoArticleJobs.id, input.id));
         
-        if (!article || article.userId !== ctx.user.id) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Article not found or access denied" });
+        if (!job || job.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Job not found or access denied" });
         }
         
-        await db.delete(seoArticles).where(eq(seoArticles.id, input.id));
+        await db.delete(seoArticleJobs).where(eq(seoArticleJobs.id, input.id));
+        return { success: true };
+      }),
+
+    cancelJob: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        
+        // Verify ownership
+        const [job] = await db.select().from(seoArticleJobs)
+          .where(eq(seoArticleJobs.id, input.id));
+        
+        if (!job || job.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Job not found or access denied" });
+        }
+
+        if (job.status !== 'pending' && job.status !== 'processing') {
+           throw new TRPCError({ code: "BAD_REQUEST", message: "Job is not in a cancellable state" });
+        }
+        
+        // Update status to cancelled
+        // We cast to any because the schema might be strict about status enum but we want to force it if needed
+        await db.update(seoArticleJobs)
+          .set({ status: 'cancelled', errorMessage: 'Cancelled by user' } as any)
+          .where(eq(seoArticleJobs.id, input.id));
+          
         return { success: true };
       }),
 

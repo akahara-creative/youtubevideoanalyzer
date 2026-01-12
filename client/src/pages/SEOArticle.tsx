@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Loader2, CheckCircle2, XCircle, Download, Home, History, Trash2, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Download, Home, History, Trash2, Sparkles, Square } from "lucide-react";
 import { Streamdown } from "streamdown";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
@@ -52,6 +52,15 @@ export default function SEOArticle() {
   const authorTags = allTagsData?.find((cat: any) => cat.name === 'author')?.tags || [];
   const saveMutation = trpc.seoArticle.save.useMutation();
   const deleteMutation = trpc.seoArticle.delete.useMutation();
+  const cancelJobMutation = trpc.seoArticle.cancelJob.useMutation({
+    onSuccess: () => {
+      toast.success("ジョブをキャンセルしました");
+      refetchHistory();
+    },
+    onError: (error) => {
+      toast.error(`キャンセル失敗: ${getErrorMessage(error)}`);
+    }
+  });
   const rewriteMutation = trpc.seoArticle.rewrite.useMutation({
     onSuccess: (data) => {
       toast.success("リライトを開始しました！完了までしばらくお待ちください。");
@@ -366,7 +375,14 @@ export default function SEOArticle() {
         ? JSON.parse(historyItem.qualityCheck)
         : historyItem.qualityCheck || null;
       setQualityCheck(parsedQualityCheck);
-      setCurrentStep(8);
+      setQualityCheck(parsedQualityCheck);
+      
+      // Use the saved step if available, otherwise default to 8 (completed)
+      if (historyItem.status === 'processing' || historyItem.status === 'pending') {
+        setCurrentStep(historyItem.currentStep || 1);
+      } else {
+        setCurrentStep(8);
+      }
       
       // ジョブIDを設定（加工機能で使用）
       if (historyItem.id) {
@@ -381,12 +397,22 @@ export default function SEOArticle() {
   };
 
   const handleDeleteHistory = async (id: number) => {
+    if (!confirm("本当に削除しますか？")) return;
     try {
       await deleteMutation.mutateAsync({ id });
       refetchHistory();
       toast.success("履歴を削除しました");
     } catch (error) {
       toast.error("削除に失敗しました");
+    }
+  };
+
+  const handleCancelJob = async (id: number) => {
+    if (!confirm("生成を中断しますか？")) return;
+    try {
+      await cancelJobMutation.mutateAsync({ id });
+    } catch (error) {
+      // Error handled in mutation
     }
   };
 
@@ -461,15 +487,17 @@ export default function SEOArticle() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDownloadItem(item.article, item.theme)}
                         title="ダウンロード"
+                        disabled={!item.article}
                       >
                         <Download className="h-4 w-4" />
                       </Button>
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -477,6 +505,38 @@ export default function SEOArticle() {
                       >
                         読み込む
                       </Button>
+
+                      {/* ステータス表示・停止ボタン（読み込むと削除の間） */}
+                      <div className="min-w-[100px] flex justify-center">
+                        {item.status === 'processing' || item.status === 'pending' ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-primary animate-pulse flex items-center gap-1">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            </span>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleCancelJob(item.id)}
+                              title="生成を中断"
+                              className="h-8 px-2"
+                            >
+                              <Square className="h-3 w-3 fill-current mr-1" />
+                              停止
+                            </Button>
+                          </div>
+                        ) : item.status === 'failed' || item.status === 'cancelled' ? (
+                          <span className="text-xs text-red-500 flex items-center gap-1 font-medium border border-red-200 bg-red-50 px-2 py-1 rounded">
+                            <XCircle className="h-3 w-3" />
+                            {item.status === 'cancelled' ? '中断' : '失敗'}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-green-600 flex items-center gap-1 font-medium border border-green-200 bg-green-50 px-2 py-1 rounded">
+                            <CheckCircle2 className="h-3 w-3" />
+                            完了
+                          </span>
+                        )}
+                      </div>
+
                       <Button
                         variant="outline"
                         size="sm"
